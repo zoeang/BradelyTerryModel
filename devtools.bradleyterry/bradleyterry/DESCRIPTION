@@ -1,0 +1,12 @@
+Package: Bradleyterry
+Type: Package
+Title: This does the Bradely-Terry
+Version: 1.0
+Date: 2018-03-24
+Author: Benjamin R. Schneider, Zoe Ang, Hyun Woo Lim
+Maintainer: Benjamin R. Schneider <benjamin.schneider@wustl.edu>
+Description: Lambda and Bradley-Terry
+License: GPL(>=2)
+collate:
+  'bradleyterry.R'
+RoxygenNote: 6.0.1

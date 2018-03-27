@@ -22,15 +22,18 @@ toydata2
 
 #create lambda data frame
 lambda<-data.frame(c(1:10),runif(10))
-lambda
+colnames(lambda)<-c('DocId', 'Lambda')
 
 bradleyterry(1,1,lambdai,lambdaj,toydata)
 
-bradleyterry<-function(a,b,i,lambda,dataset){
+library(plyr)
+ddply(toydata2,2)
+
+bradleyterry<-function(a,b,id,lambda,dataset){
+  subsetdata<-dataset[dataset$DocIDi %in% id,]
   sumvec<-NULL
-  
-  for (i in 1:length(lambdai)){
-    sumunit<-(1/(lambdai[i]+lambdaj[i]))
+  for (i in 1:nrow(subsetdata)){
+    sumunit<-(1/(lambda$Lambda[id]+lambdaj[i]))
     sumvec<-as.vector(c(sumvec,sumunit))
   }
   summationterm<-sum(sumvec)

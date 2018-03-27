@@ -1,3 +1,4 @@
+rm(list=ls())
 library(devtools)
 library(roxygen2)
 
@@ -35,6 +36,8 @@ head(dd)
 dd
 obj1 <- ddply(.data=dd, .variables=c("dim1","dim2"), .fun=function(df) mean(df$v1))
 obj1
+#maybe?
+ddply(.data=dataset, .variables=c("DocIDi", "DocIDj"), .fun=bradleyterry(a,b,id,lambda,dataset))
 #end example===================================================================
 
 bradleyterry<-function(a,b,id,lambda,dataset){

@@ -6,18 +6,18 @@
 \alias{ANY-method}
 \title{Bradley-Terry}
 \usage{
-bradleyterry(a, b, lambdai, lambdaj, dataset)
+bradleyterry(a, b, id, lambda, dataset)
 }
 \arguments{
 \item{a}{an a value}
 
 \item{b}{a b value}
 
-\item{dataset}{a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'.}
-
 \item{id}{the row of your lambda dataframe with the document id that you want an updated lambda value for}
 
 \item{lambda}{a data frame with document ids and corresponding lambda values. The columns must read 'DocId' and 'Lambda'}
+
+\item{dataset}{a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'.}
 }
 \value{
 a single output value for lambda_i^(t)

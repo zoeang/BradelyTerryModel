@@ -27,13 +27,18 @@
 #' @rdname bradleyterry
 #' @aliases bradleyterry, ANY-method
 #' @export
-bradleyterry<-function(a,b,lambdai,lambdaj,dataset){
+bradleyterry<-function(a,b,id,lambda,dataset){
+  subsetdata<-dataset[dataset$DocIDi %in% id,]
   sumvec<-NULL
-  for (i in 1:length(lambdai)){
-    sumunit<-(1/(lambdai[i]+lambdaj[i]))
+  lambdavec<-NULL
+  for(i in subsetdata$DocIDj){
+    lambdavec<-c(lambdavec,lambda$Lambda[i])
+  }
+  for (i in 1:nrow(subsetdata)){
+    sumunit<-(1/(lambda$Lambda[id]+lambdavec[i]))
     sumvec<-as.vector(c(sumvec,sumunit))
   }
   summationterm<-sum(sumvec)
-  output<-(a-1+sum(dataset$Choose))/(b+summationterm)
+  output<-(a-1+sum(subsetdata$Choose))/(b+summationterm)
   return(output)
 }

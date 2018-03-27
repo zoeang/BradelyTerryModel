@@ -18,7 +18,7 @@ table(toydata$DocIDj)
 toydata$delete<- (toydata$DocIDi==toydata$DocIDj)
 toydata2<-subset(toydata,delete=="FALSE")
 toydata2<-toydata2[,-4]
-toydata2
+dataset<-toydata2
 
 #create lambda data frame
 lambda<-data.frame(c(1:10),runif(10))
@@ -36,14 +36,20 @@ dd
 obj1 <- ddply(.data=dd, .variables=c("dim1","dim2"), .fun=function(df) mean(df$v1))
 obj1
 #end example===================================================================
+
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]
   sumvec<-NULL
+  lambdavec<-NULL
+  for(i in subsetdata$DocIDj){
+    lambdavec<-c(lambdavec,lambda$Lambda[i])
+  }
   for (i in 1:nrow(subsetdata)){
-    sumunit<-(1/(lambda$Lambda[id]+lambdaj[i]))
+    sumunit<-(1/(lambda$Lambda[id]+lambdavec[i]))
     sumvec<-as.vector(c(sumvec,sumunit))
   }
   summationterm<-sum(sumvec)
-  output<-(a-1+sum(dataset$Choose))/(b+summationterm)
+  output<-(a-1+sum(subsetdata$Choose))/(b+summationterm)
   return(output)
 }
+

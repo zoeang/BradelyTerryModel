@@ -5,6 +5,7 @@ setwd("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/devtools.brad
 current.code<-as.package("bradleyterry")
 load_all(current.code)
 document(current.code)
+test(current.code)
 
 
 #CREATE FAKE DATA

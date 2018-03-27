@@ -13,14 +13,14 @@ bradleyterry(a, b, lambdai, lambdaj, dataset)
 
 \item{b}{a b value}
 
-\item{lambdai}{a vector of lambda_i}
+\item{dataset}{a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'.}
 
-\item{lambdaj}{a vector of lambda_i}
+\item{id}{the row of your lambda dataframe with the document id that you want an updated lambda value for}
 
-\item{dataset}{a dataframe with three columns of data}
+\item{lambda}{a data frame with document ids and corresponding lambda values. The columns must read 'DocId' and 'Lambda'}
 }
 \value{
-an output lambda_i^(t)
+a single output value for lambda_i^(t)
 }
 \description{
 Finds the probability of a student getting certain exam questions correctly given a parameter theta.
@@ -30,11 +30,15 @@ This function produces vectors for use in finding the likelihood function.
 }
 \examples{
 
-lambdai<-runif(30)
-lambdaj<-runif(30)
-toydata<-data.frame(rep(1,30), sample(1:100, 30, replace=T), sample(c(0,1), 30, replace=T))
+toydata<-data.frame(sort(rep(seq(1,10),10)), sample(1:10, 100, replace=T), sample(c(0,1), 100, replace=T))
 colnames(toydata)<-c("DocIDi", "DocIDj", "Choose")
-bradleyterry(1,2,lambdai,lambdaj,toydata)
+toydata$delete<- (toydata$DocIDi==toydata$DocIDj)
+toydata2<-subset(toydata,delete=="FALSE")
+toydata2<-toydata2[,-4]
+lambda<-data.frame(c(1:10),runif(10))
+colnames(lambda)<-c('DocId', 'Lambda')
+
+bradleyterry(1,1,1,lambda,toydata2)
 
 }
 \author{

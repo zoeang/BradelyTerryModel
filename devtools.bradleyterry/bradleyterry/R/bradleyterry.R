@@ -24,10 +24,12 @@
 #' @aliases bradleyterry, ANY-method
 #' @export
 bradleyterry<-function(a,b,lambdai,lambdaj,dataset){
-  summationterm<-0
-  for (i in nrow(dataset$DocIDj)){
-    summationterm<-summationterm+(1/(lambdai[i]+lambdaj[i]))
+  sumvec<-NULL
+  for (i in 1:length(lambdai)){
+    sumunit<-(1/(lambdai[i]+lambdaj[i]))
+    sumvec<-as.vector(c(sumvec,sumunit))
   }
+  summationterm<-sum(sumvec)
   output<-(a-1+sum(dataset$Choose))/(b+summationterm)
   return(output)
 }

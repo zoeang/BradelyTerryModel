@@ -12,6 +12,14 @@ colnames(toydata)<-c("DocIDi", "DocIDj", "Choose")
 lambdai<-runif(30)
 lambdaj<-runif(30)
 
+
+lambdai<-as.vector(c(.25,.25))
+lambdaj<-as.vector(c(.25,.25))
+
+toydata<-data.frame(rep(1,2), sample(1:100, 2, replace=T), sample(c(0,1), 2, replace=T))
+colnames(toydata)<-c("DocIDi", "DocIDj", "Choose")
+toydata
+dataset<-toydata
+
 bradleyterry(1,1,lambdai,lambdaj,toydata)
 
-#hi

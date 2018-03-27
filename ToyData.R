@@ -5,6 +5,7 @@ toydata
 table(toydata$DocIDj)
 
 #Remove rows where doci=docj
-toydata$delete<- (toydata2$DocIDi==toydata2$DocIDj)
+toydata$delete<- (toydata$DocIDi==toydata$DocIDj)
 toydata2<-subset(toydata,delete=="FALSE")
+toydata2<-toydata2[,-4]
 toydata2

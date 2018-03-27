@@ -4,21 +4,25 @@
 #'
 #' @param a an a value
 #' @param b a b value
-#' @param lambdai a vector of lambda_i
-#' @param lambdaj a vector of lambda_i
-#' @param dataset a dataframe with three columns of data
+#' @param id the row of your lambda dataframe with the document id that you want an updated lambda value for
+#' @param lambda a data frame with document ids and corresponding lambda values. The columns must read 'DocId' and 'Lambda'
+#' @param dataset a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'.
 #'
-#' @return an output lambda_i^(t)
+#' @return a single output value for lambda_i^(t)
 #'
 #' @author Benjamin Schneider, Zoe Ang, and Hyun Woo Lim
 #' @note This function produces vectors for use in finding the likelihood function.
 #' @examples
 #' 
-#' lambdai<-runif(30)
-#' lambdaj<-runif(30)
-#' toydata<-data.frame(rep(1,30), sample(1:100, 30, replace=T), sample(c(0,1), 30, replace=T))
+#' toydata<-data.frame(sort(rep(seq(1,10),10)), sample(1:10, 100, replace=T), sample(c(0,1), 100, replace=T))
 #' colnames(toydata)<-c("DocIDi", "DocIDj", "Choose")
-#' bradleyterry(1,2,lambdai,lambdaj,toydata)
+#' toydata$delete<- (toydata$DocIDi==toydata$DocIDj)
+#' toydata2<-subset(toydata,delete=="FALSE")
+#' toydata2<-toydata2[,-4]
+#' lambda<-data.frame(c(1:10),runif(10))
+#' colnames(lambda)<-c('DocId', 'Lambda')
+#' 
+#' bradleyterry(1,1,1,lambda,toydata2)
 #' 
 #' @rdname bradleyterry
 #' @aliases bradleyterry, ANY-method

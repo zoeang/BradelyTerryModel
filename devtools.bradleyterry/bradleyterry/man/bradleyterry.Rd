@@ -13,7 +13,7 @@ bradleyterry(a, b, id, lambda, dataset)
 
 \item{b}{a b value}
 
-\item{id}{the row of your lambda dataframe with the document id that you want an updated lambda value for}
+\item{id}{the number corresponding with the doc id that you want to update lambda for}
 
 \item{lambda}{a data frame with document ids and corresponding lambda values. The columns must read 'DocId' and 'Lambda'}
 

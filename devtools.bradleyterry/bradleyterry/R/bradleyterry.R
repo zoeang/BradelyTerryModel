@@ -4,7 +4,7 @@
 #'
 #' @param a an a value
 #' @param b a b value
-#' @param id the row of your lambda dataframe with the document id that you want an updated lambda value for
+#' @param id the number corresponding with the doc id that you want to update lambda for
 #' @param lambda a data frame with document ids and corresponding lambda values. The columns must read 'DocId' and 'Lambda'
 #' @param dataset a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'.
 #'
@@ -29,13 +29,14 @@
 #' @export
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]
+  newlambda<-lambda[lambda$DocId %in% id,]
   sumvec<-NULL
   lambdavec<-NULL
   for(i in subsetdata$DocIDj){
     lambdavec<-c(lambdavec,lambda$Lambda[i])
   }
   for (i in 1:nrow(subsetdata)){
-    sumunit<-(1/(lambda$Lambda[id]+lambdavec[i]))
+    sumunit<-(1/(newlambda$Lambda+lambdavec[i]))
     sumvec<-as.vector(c(sumvec,sumunit))
   }
   summationterm<-sum(sumvec)

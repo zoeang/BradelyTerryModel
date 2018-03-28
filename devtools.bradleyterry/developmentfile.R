@@ -22,7 +22,7 @@ toydata2<-toydata2[,-4]
 dataset<-toydata2
 
 #create lambda data frame
-lambda<-data.frame(c(1:10),runif(10))
+lambda<-data.frame(c(10:1),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
 
 bradleyterry(1,1,lambdai,lambdaj,toydata)
@@ -42,13 +42,14 @@ ddply(.data=dataset, .variables=c("DocIDi", "DocIDj"), .fun=bradleyterry(a,b,id,
 
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]
+  newlambda<-lambda[lambda$DocId %in% id,]
   sumvec<-NULL
   lambdavec<-NULL
   for(i in subsetdata$DocIDj){
     lambdavec<-c(lambdavec,lambda$Lambda[i])
   }
   for (i in 1:nrow(subsetdata)){
-    sumunit<-(1/(lambda$Lambda[id]+lambdavec[i]))
+    sumunit<-(1/(newlambda$Lambda+lambdavec[i]))
     sumvec<-as.vector(c(sumvec,sumunit))
   }
   summationterm<-sum(sumvec)
@@ -56,3 +57,10 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+dataset
+lambda<-data.frame(c(10:1),.5)
+colnames(lambda)<-c('DocId', 'Lambda')
+
+bradleyterry(1,1,10,lambda,dataset)
+
+lambda$Lambda[2]

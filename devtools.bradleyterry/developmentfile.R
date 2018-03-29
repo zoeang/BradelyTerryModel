@@ -63,10 +63,32 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+id<-rep(1:10)
 dataset
 lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
-bradleyterry(1,1,10,lambda,dataset)
+bradleyterry(1,1,id,lambda,dataset)
 
-lambda$Lambda[2]
+bradleyterry<-function(a,b,id,lambda,dataset){
+  updatedlambda<-NULL
+  for (i in id){
+    subsetdata<-dataset[dataset$DocIDi %in% i,]
+    newlambda<-lambda[lambda$DocId %in% i,]
+    sumvec<-NULL
+    lambdavec<-NULL
+    for(i in subsetdata$DocIDj){
+      lambdavec<-c(lambdavec,lambda$Lambda[i])
+    }
+    for (i in 1:nrow(subsetdata)){
+      sumunit<-(1/(newlambda$Lambda+lambdavec[i]))
+      sumvec<-as.vector(c(sumvec,sumunit))
+    }
+    summationterm<-sum(sumvec)
+    output<-(a-1+sum(subsetdata$Choose))/(b+summationterm)
+    updatedlambda<-c(updatedlambda,output)}
+  output<-cbind(id,updatedlambda)
+  output<-as.data.frame(output)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
+}

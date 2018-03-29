@@ -46,6 +46,7 @@ obj1
 ddply(.data=dataset, .variables=c("DocIDi", "DocIDj"), .fun=bradleyterry(a,b,id,lambda,dataset))
 #end example===================================================================
 
+#### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]
   newlambda<-lambda[lambda$DocId %in% id,]
@@ -71,6 +72,7 @@ colnames(lambda)<-c('DocId', 'Lambda')
 bradleyterry(1,1,1,lambda,dataset)
 bradleyterry.multid(1,1,id,lambda,dataset)
 
+#### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL
   for (i in id){
@@ -83,6 +85,8 @@ bradleyterry.multid<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+
+#### FUNCTION 3 #######
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   for (i in 1:iterations){
     lambda<-bradleyterry.multid(a,b,id,lambda,dataset)}

@@ -18,7 +18,7 @@ rep(c(1,0,1,1,0),20)
 #CREATE FAKE DATA
 dataset<-toydata<-data.frame(sort(rep(seq(1,10),10)), docjdat, rep(c(1,0,1,1,0),20))
 colnames(dataset)<-c("DocIDi", "DocIDj", "Choose")
-toydata
+dataset
 table(toydata$DocIDj)
 
 #Remove rows where doci=docj
@@ -32,8 +32,6 @@ table(toydata$DocIDj)
 #create lambda data frame
 lambda<-data.frame(c(10:1),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
-
-bradleyterry(1,1,lambdai,lambdaj,toydata)
 
 library(plyr)
 ddply(toydata2,2)
@@ -65,10 +63,44 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+id<-rep(1:10)
 dataset
 lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
-bradleyterry(1,1,10,lambda,dataset)
+bradleyterry(1,1,1,lambda,dataset)
 
-lambda$Lambda[2]
+bradleyterry<-function(a,b,id,lambda,dataset){
+  updatedlambda<-NULL
+  for (i in id){
+    subsetdata<-dataset[dataset$DocIDi %in% i,]
+    newlambda<-lambda[lambda$DocId %in% i,]
+    sumvec<-NULL
+    lambdavec<-NULL
+    for(i in subsetdata$DocIDj){
+      lambdavec<-c(lambdavec,lambda$Lambda[i])
+    }
+    for (i in 1:nrow(subsetdata)){
+      sumunit<-(1/(newlambda$Lambda+lambdavec[i]))
+      sumvec<-as.vector(c(sumvec,sumunit))
+    }
+    summationterm<-sum(sumvec)
+    output<-(a-1+sum(subsetdata$Choose))/(b+summationterm)
+    updatedlambda<-c(updatedlambda,output)}
+  output<-cbind(id,updatedlambda)
+  output<-as.data.frame(output)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
+}
+
+iterative.bt<-function(a,b,id,lambda,dataset, iterations){
+  for (i in 1:iterations){
+    lambda<-bradleyterry(a,b,id,lambda,dataset)}
+  return(lambda)
+}
+
+
+newlambda<-bradleyterry(1,1,id,lambda,dataset)
+newlambda1<-bradleyterry(1,1,id,newlambda,dataset)
+bradleyterry(1,1,id,newlambda1,dataset)
+iterative.bt(1,1,id,lambda,dataset,50)

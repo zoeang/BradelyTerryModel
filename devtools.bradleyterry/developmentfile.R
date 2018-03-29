@@ -93,7 +93,9 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   return(lambda)
 }
 
-bradleyterry(1,1,id,lambda,dataset)
+bradleyterry(1,1,1,lambda,dataset)
+bradleyterry.multid(1,1,id,lambda,dataset)
+iterative.bt(1,1,id,lambda,dataset,1)
 
 newlambda<-bradleyterry(1,1,id,lambda,dataset)
 newlambda1<-bradleyterry(1,1,id,newlambda,dataset)

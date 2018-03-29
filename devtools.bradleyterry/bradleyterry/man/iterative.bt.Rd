@@ -41,7 +41,7 @@ lambda<-data.frame(c(1:10),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
 id<-seq(1:10)
 
-bradleyterry(1,1,id,lambda,toydata2,20)
+iterative.bt(1,1,id,lambda,toydata2,20)
 
 }
 \author{

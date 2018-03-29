@@ -69,24 +69,14 @@ lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
 bradleyterry(1,1,1,lambda,dataset)
+bradleyterry.multid(1,1,id,lambda,dataset)
 
-bradleyterry<-function(a,b,id,lambda,dataset){
+bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL
   for (i in id){
-    subsetdata<-dataset[dataset$DocIDi %in% i,]
-    newlambda<-lambda[lambda$DocId %in% i,]
-    sumvec<-NULL
-    lambdavec<-NULL
-    for(i in subsetdata$DocIDj){
-      lambdavec<-c(lambdavec,lambda$Lambda[i])
+    newlambda<-bradleyterry(a,b,i,lambda,dataset)
+    updatedlambda<-c(updatedlambda,newlambda)
     }
-    for (i in 1:nrow(subsetdata)){
-      sumunit<-(1/(newlambda$Lambda+lambdavec[i]))
-      sumvec<-as.vector(c(sumvec,sumunit))
-    }
-    summationterm<-sum(sumvec)
-    output<-(a-1+sum(subsetdata$Choose))/(b+summationterm)
-    updatedlambda<-c(updatedlambda,output)}
   output<-cbind(id,updatedlambda)
   output<-as.data.frame(output)
   colnames(output)<-c('DocId','Lambda')
@@ -95,12 +85,13 @@ bradleyterry<-function(a,b,id,lambda,dataset){
 
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   for (i in 1:iterations){
-    lambda<-bradleyterry(a,b,id,lambda,dataset)}
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)}
   return(lambda)
 }
 
+bradleyterry(1,1,id,lambda,dataset)
 
 newlambda<-bradleyterry(1,1,id,lambda,dataset)
 newlambda1<-bradleyterry(1,1,id,newlambda,dataset)
-bradleyterry(1,1,id,newlambda1,dataset)
-iterative.bt(1,1,id,lambda,dataset,50)
+bradleyterry(1,1,1,newlambda1,dataset)
+iterative.bt(1,1,id,lambda,dataset,1)

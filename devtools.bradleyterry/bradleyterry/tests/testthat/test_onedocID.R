@@ -25,6 +25,6 @@ colnames(lambda2)<-c('DocId', 'Lambda')
 #This is the test==================================================
 test_that("Scalar lambda output",{
   expect_that(bradleyterry(1,1,10,lambda,dataset), equals(6/11))
-  expect_that(bradleyterry(1,1,10,lambda2,dataset2), equals(6/11))
+  #expect_that(bradleyterry(1,1,10,lambda2,dataset2), equals(6/11))
 })
-bradleyterry(1,1,id=5,lambda2,dataset2)
+

@@ -68,7 +68,7 @@ dataset
 lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
-bradleyterry(1,1,id,lambda,dataset)
+bradleyterry(1,1,1,lambda,dataset)
 
 bradleyterry<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL
@@ -92,3 +92,15 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   colnames(output)<-c('DocId','Lambda')
   return(output)
 }
+
+iterative.bt<-function(a,b,id,lambda,dataset, iterations){
+  for (i in 1:iterations){
+    lambda<-bradleyterry(a,b,id,lambda,dataset)}
+  return(lambda)
+}
+
+
+newlambda<-bradleyterry(1,1,id,lambda,dataset)
+newlambda1<-bradleyterry(1,1,id,newlambda,dataset)
+bradleyterry(1,1,id,newlambda1,dataset)
+iterative.bt(1,1,id,lambda,dataset,50)

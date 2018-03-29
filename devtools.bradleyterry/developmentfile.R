@@ -17,7 +17,7 @@ docjdat<-c(2,seq(2,10,1), 1, seq(3,10,1), 1,2, seq(4,10,1),1, seq(1,3,1), seq(5,
 rep(c(1,0,1,1,0),20)
 #CREATE FAKE DATA
 dataset<-toydata<-data.frame(sort(rep(seq(1,10),10)), docjdat, rep(c(1,0,1,1,0),20))
-colnames(toydata)<-c("DocIDi", "DocIDj", "Choose")
+colnames(dataset)<-c("DocIDi", "DocIDj", "Choose")
 toydata
 table(toydata$DocIDj)
 

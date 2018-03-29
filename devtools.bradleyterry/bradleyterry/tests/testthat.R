@@ -1,4 +1,4 @@
 library(testthat)
-library(TestPack)
+library(bradleyterry)
 
 test_check("bradleyterry")

@@ -18,7 +18,7 @@ rep(c(1,0,1,1,0),20)
 #CREATE FAKE DATA
 dataset<-toydata<-data.frame(sort(rep(seq(1,10),10)), docjdat, rep(c(1,0,1,1,0),20))
 colnames(dataset)<-c("DocIDi", "DocIDj", "Choose")
-toydata
+dataset
 table(toydata$DocIDj)
 
 #Remove rows where doci=docj
@@ -32,8 +32,6 @@ table(toydata$DocIDj)
 #create lambda data frame
 lambda<-data.frame(c(10:1),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
-
-bradleyterry(1,1,lambdai,lambdaj,toydata)
 
 library(plyr)
 ddply(toydata2,2)

@@ -69,8 +69,8 @@ dataset
 lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
-bradleyterry(1,1,1,lambda,dataset)
-bradleyterry.multid(1,1,id,lambda,dataset)
+bradleyterry(1,0,2,lambda,dataset)
+bradleyterry.multid(1,0,id,lambda,dataset)
 
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){

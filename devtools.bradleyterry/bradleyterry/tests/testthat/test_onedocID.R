@@ -16,11 +16,15 @@ lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
 #more fake data======================================
+win<-c(rep(0,100000),rep(1,100000))
 docjdat2<-c(seq(2,11,1), seq(3,12,1), seq(4,13,1), seq(5,14,1), seq(6,15,1), seq(7,16,1), seq(8,17,1), seq(9,18,1), seq(10,19,1), seq(9,0,-1))
-dataset2<-data.frame(sort(rep(seq(1,10),10)), docjdat2, rep(c(0,1,0,1,1),20))
+set.seed(69)
+dataset2<-data.frame(sort(rep(seq(1,10),10)), docjdat2, sample(x=win,100))
 colnames(dataset2)<-c("DocIDi", "DocIDj", "Choose")
-lambda2<-data.frame(c(10:1),c(.25,.5,.3,.1,.8,.55,.9,0,.75, .1))
+set.seed(42)
+lambda2<-data.frame(c(10:1),runif(10))
 colnames(lambda2)<-c('DocId', 'Lambda')
+
 
 #This is the test==================================================
 test_that("Scalar lambda output",{

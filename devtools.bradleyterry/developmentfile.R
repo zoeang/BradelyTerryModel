@@ -64,7 +64,6 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
-
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL

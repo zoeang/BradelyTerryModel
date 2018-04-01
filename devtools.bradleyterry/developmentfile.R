@@ -64,10 +64,6 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
-id<-rep(1:10)
-dataset
-lambda<-data.frame(c(10:1),.5)
-colnames(lambda)<-c('DocId', 'Lambda')
 
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){

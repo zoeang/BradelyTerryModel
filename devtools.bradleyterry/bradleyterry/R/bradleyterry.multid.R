@@ -1,15 +1,14 @@
-#' Bradley-Terry Updated Iterations
+#' Bradley-Terry of multiple ids
 #'
 #' Finds the probability of a student getting certain exam questions correctly given a parameter theta.
 #'
 #' @param a an a value
 #' @param b a b value
-#' @param id a vector of the document id numbers that need to be updated
+#' @param id a vector of ids
 #' @param lambda a data frame with document ids and corresponding lambda values. The columns must read 'DocId' and 'Lambda'
-#' @param dataset a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'.
-#' @param iterations a number of the times you want lambda values updated
+#' @param dataset a dataframe with three columns of data. The columns must read 'DocIDi', 'DocIDj', and 'Choose'
 #'
-#' @return a data frame of document ids and their corresponding updated lambdas
+#' @return a dataframe of updated lambda values 
 #'
 #' @author Benjamin Schneider, Zoe Ang, and Hyun Woo Lim
 #' @note This function produces vectors for use in finding the likelihood function.
@@ -24,14 +23,19 @@
 #' colnames(lambda)<-c('DocId', 'Lambda')
 #' id<-seq(1:10)
 #' 
-#' iterative.bt(1,1,id,lambda,toydata2,20)
+#' bradleyterry.multid(1,1,id,lambda,toydata2)
 #' 
-#' @rdname iterative.bt
+#' @rdname bradleyterry.multid
 #' @aliases bradleyterry, ANY-method
 #' @export
-iterative.bt<-function(a,b,id,lambda,dataset, iterations){
-  for (i in 1:iterations){
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)
-    }
-  return(lambda)
+bradleyterry.multid<-function(a,b,id,lambda,dataset){
+  updatedlambda<-NULL
+  for (i in id){
+    newlambda<-bradleyterry(a,b,i,lambda,dataset)
+    updatedlambda<-c(updatedlambda,newlambda)
+  }
+  output<-cbind(id,updatedlambda)
+  output<-as.data.frame(output)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
 }

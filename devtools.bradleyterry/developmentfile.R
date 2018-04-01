@@ -69,7 +69,7 @@ lambda<-data.frame(c(10:1),.5)
 colnames(lambda)<-c('DocId', 'Lambda')
 
 bradleyterry(1,1,1,lambda,dataset)
-
+#==============================================
 bradleyterry<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL
   for (i in id){

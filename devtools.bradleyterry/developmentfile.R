@@ -51,19 +51,14 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
-id<-rep(1:10)
-dataset
-lambda<-data.frame(c(10:1),.5)
-colnames(lambda)<-c('DocId', 'Lambda')
-
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL
-  for (i in id){
+  for (i in id){ # run loop for each vector in id
     newlambda<-bradleyterry(a,b,i,lambda,dataset)
-    updatedlambda<-c(updatedlambda,newlambda)
+    updatedlambda<-c(updatedlambda,newlambda) #update lambda
     }
-  output<-cbind(id,updatedlambda)
+  output<-cbind(id,updatedlambda) #bind id and updated lambda
   output<-as.data.frame(output)
   colnames(output)<-c('DocId','Lambda')
   return(output)
@@ -72,7 +67,7 @@ bradleyterry.multid<-function(a,b,id,lambda,dataset){
 
 #### FUNCTION 3 #######
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
-  for (i in 1:iterations){
+  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
     lambda<-bradleyterry.multid(a,b,id,lambda,dataset)}
   return(lambda)
 }

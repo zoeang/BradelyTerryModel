@@ -158,3 +158,6 @@ newlambda<-bradleyterry(1,1,HIT$DocIDi,lambda,HIT)
 newlambda1<-bradleyterry(1,1,DocIDi,newlambda,HIT)
 bradleyterry(1,1,1,newlambda1,HIT)
 iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
+
+load('/Users/benjaminschneider/Downloads/docInfo.Rdata')
+head(docInfo)

@@ -48,10 +48,18 @@ for(i in 1:nrow(newHIT)){
     newHIT$chosen2[i]=0
   }
 }
+
 sum(newHIT$chosen==newHIT$chosen2)
-newHIT2<-as.data.frame(cbind(newHIT$DocIDj, newHIT$DocIDi, newHIT$Choose2))
-newHIT2<-newHIT[,-4]
-colnames(newHIT2)<-c("DocIDi", "DocIDj", "chosen")
+newHIT2<-as.data.frame(cbind(newHIT$DocIDj, newHIT$DocIDi, newHIT$chosen2))
+
+colnames(newHIT2)<-c("DocIDi", "DocIDj", "Choose")
+head(newHIT2)
+head(newHIT1)
+metaHIT1<-rbind(newHIT1, newHIT2)
+
+newHIT1<-as.data.frame(cbind(newHIT$DocIDi, newHIT$DocIDj, newHIT$chosen))
+
+colnames(newHIT1)<-c("DocIDi", "DocIDj", "Choose")
 head(newHIT,2)
 
 newHIT<-subset(newHIT, select = -c(chosen2) )

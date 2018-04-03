@@ -101,8 +101,8 @@ HIT$lambda_i<-rep(runif(50), each=2) #create 100 random values for lambda_i
 
 #fake to match docid_j
 DocIDj<-unique(HIT$DocIDj)
-nums<-runif(length(unique(HIT$DocIDj)))
-fake<-cbind(DocIDj,nums)
+lambda_j<-runif(length(unique(HIT$DocIDj)))
+fake<-cbind(DocIDj,lambda_j)
 
 #merge
 HIT <- merge(fake,HIT,by="DocIDj")
@@ -149,7 +149,7 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
 
 bradleyterry(1,1,1,lambda,dataset)
 bradleyterry.multid(1,1,id,lambda,dataset)
-iterative.bt(1,0,id,lambda,dataset,100)
+x<-iterative.bt(1,0,id,lambda,metaHIT1,100)
 
 newlambda<-bradleyterry(1,1,id,lambda,dataset)
 newlambda1<-bradleyterry(1,1,id,newlambda,dataset)

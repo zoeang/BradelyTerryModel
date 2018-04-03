@@ -34,13 +34,15 @@ lambda<-data.frame(c(10:1),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
 #consider for row 44
 which(HIT$DocIDj==subsetdata$DocIDj) #this gives the rows of HIT of the relevant docs
+
+
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
   newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
-  for(i in subsetdata$DocIDj){
+  for(i in which(lambda$DocId==subsetdata$DocIDj)){
     lambdavec<-c(lambdavec,lambda$Lambda[i]) #This extracts all of the lambdaj values that we will work with in the equation below
   }
   for (i in 1:nrow(subsetdata)){
@@ -52,6 +54,7 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+which(lambda$DocId==subsetdata$DocIDj)
 HIT
 lambda
 subsetdata<-HIT[HIT$DocIDi %in% 1755,]

@@ -51,6 +51,12 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+HIT
+lambda
+subsetdata<-HIT[HIT$DocIDi %in% 1755,]
+newlambda<-lambda[lambda$DocId %in% 1755,]
+bradleyterry(1,0,1,lambda,HIT)
+
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL

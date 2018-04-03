@@ -98,28 +98,20 @@ newlambda<-lambda[lambda$DocId %in% id,]
 #Dataset to recover lambda############
 HIT #start with HIT data
 HIT$lambda_i<-rep(runif(50), each=2) #create 100 random values for lambda_i
-HIT$lambda_j<-runif(100)#create 100 random values for lambda_j
-HIT$chosen
-length(unique(HIT$DocIDj))
-lambdas<-runif(length(unique(HIT$DocIDj)))
-lambdajsave<-lambda[lambda$DocId %in% id,]
+
+#fake to match docid_j
+DocIDj<-unique(HIT$DocIDj)
+nums<-runif(length(unique(HIT$DocIDj)))
+fake<-cbind(DocIDj,nums)
+
+#merge
+HIT <- merge(fake,HIT,by="DocIDj")
 
 
-library(dplyr)
-library(plyr)
-
-HIT$unique_id <- as.numeric((with(df, runif(1))))
-HIT <- transform(HIT, Cluster_ID = as.numeric(interaction(DocIDj, drop=TRUE)))
-HIT %>% 
-  group_by(DocIDj) %>% 
-  mutate(Code_n = (runif(length(unique(HIT$DocIDj)))))
-
-
-
-head(HIT, 10)
 #probablity of choosing doc_i over doc_j
 HIT$p_i<-HIT$lambda_i/(HIT$lambda_i+HIT$lambda_j) #calculate the prob that doc i beats doc j
 HIT$p_i_not<-1-HIT$p_i #compliment of P(i beats J)
+
 
 #choosing what is chosen
 for (i in 1:nrow(HIT)){

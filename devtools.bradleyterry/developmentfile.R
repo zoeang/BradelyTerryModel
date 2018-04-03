@@ -85,14 +85,14 @@ HIT$lambda<-runif(nrow(HIT))
 up_lambda<-bradleyterry(1,2,1922,lambda,HIT)
 newlambda<-lambda[lambda$DocId %in% id,]
 
-#############
+#Dataset to recover lambda############
 HIT
 HIT$lambda_i<-runif(100)
 HIT$lambda_j<-runif(100)
 HIT$chosen
 
 #probablity of choosing doc_i over doc_j
-HIT$p_i<-lambda_i/(lambda_i+lambda_j)
+HIT$p_i<-HIT$lambda_i/(HIT$lambda_i+HIT$lambda_j)
 HIT$p_i_not<-1-HIT$p_i
 
 #choosing what is chosen
@@ -100,8 +100,8 @@ for (i in 1:nrow(HIT)){
   #HIT$chosen[i]<-rbinorm(c(1,0),1,replace=T,prob=c(HIT$p_i[i],HIT$p_i_not[i]))
   HIT$chosen[i]<-rbinom(1,1,prob=c(HIT$p_i[i],HIT$p_i_not[i]))
 }
-
-
+sum(HIT$Choose==HIT$chosen)
+head(HIT, 10)
 
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){

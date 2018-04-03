@@ -25,7 +25,9 @@ if(HIT$Choose[i]==0){
 }
 sum(HIT$Choose==HIT$Choose2)
 HIT2<-as.data.frame(cbind(HIT$DocIDj, HIT$DocIDi, HIT$Choose2))
-
+HIT<-HIT[,-4]
+colnames(HIT2)<-c("DocIDi", "DocIDj", "Choose")
+head(HIT,2)
 #===========================
 metaHIT<-rbind(HIT, HIT2)
-class(HIT)
+

@@ -6,6 +6,7 @@ uniqueDocID<-c(unique(lambdaDF[,2]),unique(lambdaDF[,1]))
 set.seed(13)
 lambdaDocIDj<-round(runif(uniqueDocID),3)
 lambda<-data.frame(uniqueDocID, lambdaDocIDj)
-
+colnames(lambda)<-c('DocId', 'Lambda')
 #lambda dataframe
 lambda
+table(HIT$DocIDj)

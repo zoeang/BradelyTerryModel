@@ -80,3 +80,13 @@ newlambda<-bradleyterry(1,1,id,lambda,dataset)
 newlambda1<-bradleyterry(1,1,id,newlambda,dataset)
 bradleyterry(1,1,1,newlambda1,dataset)
 iterative.bt(1,1,id,lambda,dataset,1)
+
+#trials with Jacob's data====================================
+bradleyterry(1,1,1,lambda,dataset)
+bradleyterry.multid(1,1,HIT$DocIDi,lambda,HIT)
+iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
+
+newlambda<-bradleyterry(1,1,HIT$DocIDi,lambda,HIT)
+newlambda1<-bradleyterry(1,1,DocIDi,newlambda,HIT)
+bradleyterry(1,1,1,newlambda1,HIT)
+iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)

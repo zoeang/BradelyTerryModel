@@ -32,7 +32,8 @@ table(toydata$DocIDj)
 #create lambda data frame
 lambda<-data.frame(c(10:1),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
-
+#consider for row 44
+which(HIT$DocIDj==subsetdata$DocIDj) #this gives the rows of HIT of the relevant docs
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at

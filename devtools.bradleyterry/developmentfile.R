@@ -42,10 +42,10 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
-  lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj,]
-  for(i in 1:nrow(lambdajsubset)){
-    lambdavec<-c(lambdavec,lambdajsubset$Lambda[i]) #This extracts all of the lambdaj values that we will work with in the equation below
-  }
+  for(i in 1:length(subsetdata$DocIDj)){
+    lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[i],]
+    lambdavec<-c(lambdavec,lambdajsubset$Lambda)
+    }
   for (i in 1:nrow(subsetdata)){
     sumunit<-(1/(newlambda$Lambda+lambdavec[i])) #This creates the summation term unit by unit with the lambda i value and all of the respective lambda js 
     sumvec<-as.vector(c(sumvec,sumunit)) #this makes a vector of the summation terms
@@ -54,6 +54,16 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   output<-(a-1+sum(subsetdata$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }
+
+lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[2],]
+lambdavec<-c(lambdavec,lambdajsubset$Lambda)
+nrow(q)
+dataset<-metaHIT
+subsetdata<-dataset[dataset$DocIDi %in% 5059,]
+newlambda<-lambda[lambda$DocId %in% 5059,]
+
+bradleyterry(1,0,5059,lambda,metaHIT)
+bradleyterry.multid(1,0,id,lambda,metaHIT)
 
 lambda[lambda$DocId %in% subsetdata$DocIDj,]
 
@@ -68,9 +78,9 @@ subsetdata<-HIT[HIT$DocIDi %in% 1786,]
 newlambda<-lambda[lambda$DocId %in% 1786,]
 bradleyterry(1,0,1,lambda,HIT)
 id<-HIT$DocIDi[1:100]
-id<-lambda$DocId[49:98]
-bradleyterry(1,0,1786,lambda,HIT)
-bradleyterry.multid(1,0,id,lambda,HIT)
+id<-lambda$DocId
+bradleyterry(1,0,5059,lambda,metaHIT)
+bradleyterry.multid(1,0,id,lambda,metaHIT)
 
 
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
@@ -131,7 +141,7 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
 
 bradleyterry(1,1,1,lambda,dataset)
 bradleyterry.multid(1,1,id,lambda,dataset)
-iterative.bt(1,1,id,lambda,dataset,1)
+iterative.bt(1,0,id,lambda,dataset,100)
 
 newlambda<-bradleyterry(1,1,id,lambda,dataset)
 newlambda1<-bradleyterry(1,1,id,newlambda,dataset)

@@ -82,7 +82,7 @@ id<-lambda$DocId
 bradleyterry(1,0,5059,lambda,metaHIT)
 bradleyterry.multid(1,0,id,lambda,metaHIT)
 
-
+HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
 HIT

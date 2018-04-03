@@ -10,3 +10,22 @@ colnames(lambda)<-c('DocId', 'Lambda')
 #lambda dataframe
 lambda
 table(HIT$DocIDj)
+
+head(HIT,50)
+
+which(HIT$DocIDi==1755 & HIT$DocIDj==5059)
+
+#Meta-HIT
+for(i in 1:nrow(HIT)){
+if(HIT$Choose[i]==0){
+  HIT$Choose2[i]=1
+} else if(HIT$Choose[i]==1){
+  HIT$Choose2[i]=0
+}
+}
+sum(HIT$Choose==HIT$Choose2)
+HIT2<-as.data.frame(cbind(HIT$DocIDj, HIT$DocIDi, HIT$Choose2))
+
+#===========================
+metaHIT<-rbind(HIT, HIT2)
+class(HIT)

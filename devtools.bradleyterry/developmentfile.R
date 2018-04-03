@@ -42,8 +42,9 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
-  for(i in which(lambda$DocId==subsetdata$DocIDj)){
-    lambdavec<-c(lambdavec,lambda$Lambda[i]) #This extracts all of the lambdaj values that we will work with in the equation below
+  lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj,]
+  for(i in 1:nrow(lambdajsubset)){
+    lambdavec<-c(lambdavec,lambdajsubset$Lambda[i]) #This extracts all of the lambdaj values that we will work with in the equation below
   }
   for (i in 1:nrow(subsetdata)){
     sumunit<-(1/(newlambda$Lambda+lambdavec[i])) #This creates the summation term unit by unit with the lambda i value and all of the respective lambda js 
@@ -54,12 +55,22 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+lambda[lambda$DocId %in% subsetdata$DocIDj,]
+
+nums<-rownames(lambdajsubset)
+as.numeric(nums)
+
+?which
 which(lambda$DocId==subsetdata$DocIDj)
 HIT
 lambda
-subsetdata<-HIT[HIT$DocIDi %in% 1755,]
-newlambda<-lambda[lambda$DocId %in% 1755,]
+subsetdata<-HIT[HIT$DocIDi %in% 1786,]
+newlambda<-lambda[lambda$DocId %in% 1786,]
 bradleyterry(1,0,1,lambda,HIT)
+id<-HIT$DocIDi[1:100]
+id<-lambda$DocId[49:98]
+bradleyterry(1,0,1786,lambda,HIT)
+bradleyterry.multid(1,0,id,lambda,HIT)
 
 
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
@@ -98,12 +109,18 @@ bradleyterry.multid<-function(a,b,id,lambda,dataset){
   for (i in id){ # run loop for each vector in id
     newlambda<-bradleyterry(a,b,i,lambda,dataset)
     updatedlambda<-c(updatedlambda,newlambda) #update lambda
-    }
+  }
+  lambdajsave<-lambda[!lambda$DocId %in% id,]
   output<-cbind(id,updatedlambda) #bind id and updated lambda
   output<-as.data.frame(output)
+  #output<-rbind(output,lambdajsave)
   colnames(output)<-c('DocId','Lambda')
   return(output)
 }
+
+
+
+lambdajsave<-lambda[!lambda$DocId %in% id,]
 
 
 #### FUNCTION 3 #######

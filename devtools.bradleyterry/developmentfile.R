@@ -150,6 +150,13 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
 bradleyterry(1,1,1,lambda,dataset)
 bradleyterry.multid(1,1,id,lambda,dataset)
 x<-iterative.bt(1,0,id,lambda,metaHIT1,100)
+head(x)
+head(lambda)
+
+id
+Lam<-runif(300,0,10)
+lambda<-as.data.frame(cbind(id,Lam))
+colnames(lambda)<-c('DocId', 'Lambda')
 
 newlambda<-bradleyterry(1,1,id,lambda,dataset)
 newlambda1<-bradleyterry(1,1,id,newlambda,dataset)

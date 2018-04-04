@@ -175,3 +175,19 @@ iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
 
 load('/Users/benjaminschneider/Downloads/docInfo.Rdata')
 head(docInfo)
+
+
+
+
+#####DATA GENERATING FUNCTION
+
+data.generation<-function(lambda,n){
+  output.lambda<-NULL
+  for (i in 1:n){
+    
+    
+    output.lambda<-rbind(output.lambda, new.lambda)
+  }
+  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose")
+  return(output.lambda)
+}

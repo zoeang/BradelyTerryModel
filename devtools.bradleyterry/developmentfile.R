@@ -35,7 +35,7 @@ colnames(lambda)<-c('DocId', 'Lambda')
 #consider for row 44
 which(HIT$DocIDj==subsetdata$DocIDj) #this gives the rows of HIT of the relevant docs
 
-
+id=1
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
@@ -54,6 +54,7 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   output<-(a-1+sum(subsetdata$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }
+bradleyterry(1,1,1,lambda1,dataset)
 
 lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[2],]
 lambdavec<-c(lambdavec,lambdajsubset$Lambda)
@@ -143,7 +144,8 @@ lambdajsave<-lambda[!lambda$DocId %in% id,]
 #### FUNCTION 3 #######
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)}
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)
+    }
   return(lambda)
 }
 
@@ -153,8 +155,8 @@ x<-iterative.bt(1,0,id,lambda,metaHIT1,100)
 head(x)
 head(lambda)
 
-id
-Lam<-runif(300,0,10)
+id<-1:10
+Lam<-runif(10,0,10)
 lambda<-as.data.frame(cbind(id,Lam))
 colnames(lambda)<-c('DocId', 'Lambda')
 
@@ -181,13 +183,36 @@ head(docInfo)
 
 #####DATA GENERATING FUNCTION
 
+id<-1:10
+Lam<-runif(10)
+lambda<-as.data.frame(cbind(id,Lam))
+colnames(lambda)<-c('DocId', 'Lambda')
+
+id<-1:10
+Lam<-runif(10)
+lambda1<-as.data.frame(cbind(id,Lam))
+colnames(lambda1)<-c('DocId', 'Lambda')
+
+n=10000
 data.generation<-function(lambda,n){
   output.lambda<-NULL
   for (i in 1:n){
-    
-    
+    lams<-sample(lambda$DocId, 2)
+    lambdavec<-NULL
+    for (i in lams){
+      lambdavec<-c(lambdavec,lambda$Lambda[i])
+    }
+    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2])
+    Choose <- sample(c(0,1), 10, replace = TRUE, prob = c(1-prob, prob))
+    new.lambda<-cbind(lams[1],lams[2],Choose)
     output.lambda<-rbind(output.lambda, new.lambda)
   }
+  rownames(output.lambda)<-NULL
+  output.lambda<-as.data.frame(output.lambda)
   colnames(output.lambda)<-c("DocIDi","DocIDj","Choose")
   return(output.lambda)
 }
+sum(Choose)
+dataset<-data.generation(lambda,5000)
+bradleyterry.multid(1,1,id,lambda1,blah)
+iterative.bt(1,1,id,lambda1,blah,50)

@@ -47,6 +47,9 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
+lambda
+iterative.bt(1,0,id,lambda1,blah, 100)
+
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL #creating a vector for storing the updated lambda
@@ -72,7 +75,7 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
 #####DATA GENERATING FUNCTION #####
 
 id<-1:10
-Lam<-runif(10,0,5)
+Lam<-runif(10)
 lambda<-as.data.frame(cbind(id,Lam))
 colnames(lambda)<-c('DocId', 'Lambda')
 
@@ -105,7 +108,7 @@ data.generation<-function(lambda,n){
   return(output.lambda) #outputs our data
 }
 
-blah<-data.generation(lambda,5000)
+blah<-data.generation(lambda,500)
 bradleyterry.multid(1,1,id,lambda1,blah)
 iterative.bt(1,1,id,lambda1,blah,100)
 

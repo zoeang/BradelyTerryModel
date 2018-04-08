@@ -29,18 +29,19 @@
 #' @aliases bradleyterry, ANY-method
 #' @export
 bradleyterry<-function(a,b,id,lambda,dataset){
-  subsetdata<-dataset[dataset$DocIDi %in% id,]
-  newlambda<-lambda[lambda$DocId %in% id,]
-  sumvec<-NULL
-  lambdavec<-NULL
-  for(i in subsetdata$DocIDj){
-    lambdavec<-c(lambdavec,lambda$Lambda[i])
+  subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
+  newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
+  sumvec<-NULL #create null vectors to store our sum elements
+  lambdavec<-NULL #create null vector to extract the lambda elements we want
+  for(i in 1:length(subsetdata$DocIDj)){ #the purpose of thsi loop is to extract lambda j values for use in the next loop
+    lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[i],] #This picks out the lambda j values for each of the elements of the subset dataset
+    lambdavec<-c(lambdavec,lambdajsubset$Lambda) #this building the vector for use
   }
   for (i in 1:nrow(subsetdata)){
-    sumunit<-(1/(newlambda$Lambda+lambdavec[i]))
-    sumvec<-as.vector(c(sumvec,sumunit))
+    sumunit<-(1/(newlambda$Lambda+lambdavec[i])) #This creates the summation term unit by unit with the lambda i value and all of the respective lambda js 
+    sumvec<-as.vector(c(sumvec,sumunit)) #this makes a vector of the summation terms
   }
-  summationterm<-sum(sumvec)
-  output<-(a-1+sum(subsetdata$Choose))/(b+summationterm)
+  summationterm<-sum(sumvec) #here we sum the terms of the vector to plug into the equation
+  output<-(a-1+sum(subsetdata$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }

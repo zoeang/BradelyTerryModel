@@ -30,8 +30,8 @@
 #' @aliases bradleyterry, ANY-method
 #' @export
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
-  for (i in 1:iterations){
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)
-    }
-  return(lambda)
+  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
+  }
+  return(lambda) #returns the output as the number of iterations determined by the user.
 }

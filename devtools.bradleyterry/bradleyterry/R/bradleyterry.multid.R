@@ -29,13 +29,14 @@
 #' @aliases bradleyterry, ANY-method
 #' @export
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
-  updatedlambda<-NULL
-  for (i in id){
-    newlambda<-bradleyterry(a,b,i,lambda,dataset)
-    updatedlambda<-c(updatedlambda,newlambda)
+  updatedlambda<-NULL #creating a vector for storing the updated lambda
+  for (i in id){ # run loop for each vector in id
+    newlambda<-bradleyterry(a,b,i,lambda,dataset) #running the function above for each chosen doc id
+    updatedlambda<-c(updatedlambda,newlambda) #update lambda
   }
-  output<-cbind(id,updatedlambda)
-  output<-as.data.frame(output)
-  colnames(output)<-c('DocId','Lambda')
+  lambdajsave<-lambda[!lambda$DocId %in% id,]
+  output<-cbind(id,updatedlambda) #bind id and updated lambda
+  output<-as.data.frame(output) #putting the output in a format for later use
+  colnames(output)<-c('DocId','Lambda') #naming the outputs so they can be included right back in
   return(output)
 }

@@ -20,10 +20,9 @@ if(HIT$Choose[i]==0){
 }
 }
 
-<<<<<<< HEAD
-=======
-sum(HIT$Choose==HIT$Choose2)
->>>>>>> 5bf33dc062cc9dfbba11b01a0c38bbe0688a2584
+
+sum(HIT$Choose==HIT$Choose2) #test that loop worked: should equal 0
+
 HIT2<-as.data.frame(cbind(HIT$DocIDj, HIT$DocIDi, HIT$Choose2))
 HIT<-HIT[,-4]
 colnames(HIT2)<-c("DocIDi", "DocIDj", "Choose")
@@ -33,24 +32,29 @@ metaHIT<-rbind(HIT, HIT2)
 
 
 #HERE WE GO.
-newHIT<-as.data.frame(cbind(HIT$DocIDi,HIT$DocIDj,HIT$chosen))
+newHIT<-as.data.frame(cbind(HIT$DocIDi,HIT$DocIDj,HIT$Choose))
 colnames(newHIT)<-c("DocIDi", "DocIDj", "chosen")
+head(newHIT)
 #Meta-HIT
 for(i in 1:nrow(newHIT)){
   if(newHIT$chosen[i]==0){
     newHIT$chosen2[i]=1
-  } else if(HIT$chosen[i]==1){
+  } else if(newHIT$chosen[i]==1){
     newHIT$chosen2[i]=0
   }
 }
 
 sum(newHIT$chosen==newHIT$chosen2)
+newHIT<-newHIT[,-4] #remove inverse row of chosen2
+colnames(newHIT)<-c("DocIDi", "DocIDj", "Choose")
+
 newHIT2<-as.data.frame(cbind(newHIT$DocIDj, newHIT$DocIDi, newHIT$chosen2))
 
 colnames(newHIT2)<-c("DocIDi", "DocIDj", "Choose")
 head(newHIT2)
-head(newHIT1)
-metaHIT1<-rbind(newHIT1, newHIT2)
+head(newHIT)
+
+metaHIT1<-rbind(newHIT, newHIT2)
 
 newHIT1<-as.data.frame(cbind(newHIT$DocIDi, newHIT$DocIDj, newHIT$chosen))
 

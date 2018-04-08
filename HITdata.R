@@ -1,16 +1,19 @@
+#Note: the HIT data may not have enough comparisons of each ID to accurately estimate
+#lambda over multiple iterations (not enough comparisons to converge)
 HIT<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/exampleHITs.csv", header=T)
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
-#Create a lambda dataframe where each DocIDi has a lambda; unique DocIDj will have a lambda value; there should be four columns
-lambdaDF<-data.frame(HIT$DocIDi[1:100],HIT$DocIDj[1:100]) 
-uniqueDocID<-c(unique(lambdaDF[,2]),unique(lambdaDF[,1]))
+
+#Create a lambda dataframe where each unique DocID (i and j) has a lambda======
+uniqueDocID<-c(unique(HIT[,1]),unique(HIT[,2]))
 set.seed(13)
-lambdaDocIDj<-round(runif(uniqueDocID),3)
-lambda<-data.frame(uniqueDocID, lambdaDocIDj)
-colnames(lambda)<-c('DocId', 'Lambda')
+lambda.value<-round(runif(uniqueDocID),3)
+lambda.df<-data.frame(uniqueDocID, lambda.value)
+colnames(lambda.df)<-c('DocId', 'Lambda')
 #lambda dataframe
+head(lambda)
 
-
+#==============================================================================
 #Meta-HIT
 for(i in 1:nrow(HIT)){
 if(HIT$Choose[i]==0){

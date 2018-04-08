@@ -17,10 +17,8 @@ id<-1:10
 Lam<-runif(10)
 lambda<-as.data.frame(cbind(id,Lam))
 colnames(lambda)<-c('DocId', 'Lambda')
-
-id<-1:10
-Lam<-runif(10)
-lambda1<-as.data.frame(cbind(id,Lam))
+lam<-runif(10)
+lambda1<-as.data.frame(cbind(id,.5))
 colnames(lambda1)<-c('DocId', 'Lambda')
 
 data.generation<-function(lambda,n){ #n size dataset
@@ -42,10 +40,10 @@ data.generation<-function(lambda,n){ #n size dataset
   return(output.lambda) #outputs our data
 }
 
-dataset<-data.generation(lambda,500)
+dataset<-data.generation(lambda,750)
 
-bradleyterry.multid(1,1,id,lambda1,blah)
-iterative.bt(1,1,id,lambda1,blah,50)
+newlam1<-iterative.bt(1,1,id,lambda1,dataset,2000)
+sum(lambda$Lambda-newlam$Lambda)
 
 #==============================================================================
 #==============================================================================

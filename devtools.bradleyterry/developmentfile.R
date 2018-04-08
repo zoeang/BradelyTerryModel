@@ -34,7 +34,7 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
-  for(i in 1:length(subsetdata$DocIDj)){ #the purpose of thsi loop is to extract lambda j values for use in the next loop
+  for(i in 1:nrow(subsetdata)){ #the purpose of thsi loop is to extract lambda j values for use in the next loop
     lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[i],] #This picks out the lambda j values for each of the elements of the subset dataset
     lambdavec<-c(lambdavec,lambdajsubset$Lambda) #this building the vector for use
     }
@@ -72,12 +72,12 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
 #####DATA GENERATING FUNCTION #####
 
 id<-1:10
-Lam<-runif(10)
+Lam<-runif(10,0,5)
 lambda<-as.data.frame(cbind(id,Lam))
 colnames(lambda)<-c('DocId', 'Lambda')
 
 id<-1:10
-Lam<-runif(10)
+Lam<-runif(10,0,5)
 lambda1<-as.data.frame(cbind(id,Lam))
 colnames(lambda1)<-c('DocId', 'Lambda')
 
@@ -92,7 +92,12 @@ data.generation<-function(lambda,n){
     prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2]) #this uses the lambdas in order to create a probability for selection
     Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))#this chooses the document with the predetermined probability
     new.lambda<-cbind(lams[1],lams[2],Choose) #now building our output
-    output.lambda<-rbind(output.lambda, new.lambda)#row binding with the template
+    if (Choose==1){
+      Choose<-0
+    }
+    else{Choose<-1}
+    new.lambda1<-cbind(lams[2],lams[1],Choose)
+    output.lambda<-rbind(output.lambda, new.lambda, new.lambda1)#row binding with the template
   }
   rownames(output.lambda)<-NULL #getting rid of the numbers for row name
   output.lambda<-as.data.frame(output.lambda) #we do this because removing our row names made a sort of matrix
@@ -100,9 +105,9 @@ data.generation<-function(lambda,n){
   return(output.lambda) #outputs our data
 }
 
-dataset<-data.generation(lambda,500)
+blah<-data.generation(lambda,5000)
 bradleyterry.multid(1,1,id,lambda1,blah)
-iterative.bt(1,1,id,lambda1,blah,50)
+iterative.bt(1,1,id,lambda1,blah,100)
 
 #### DATA JACOB GAVE US
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)

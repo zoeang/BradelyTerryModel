@@ -1,88 +1,60 @@
 #Note: the HIT data may not have enough comparisons of each ID to accurately estimate
 #lambda over multiple iterations (not enough comparisons to converge)
+#==============================================================================
+#Read in Data
+#==============================================================================
+#Zoe
 HIT<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/exampleHITs.csv", header=T)
+#Ben
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
+#Lim
+HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
-
-#Create a lambda dataframe where each unique DocID (i and j) has a lambda======
+#==============================================================================
+#Create a lambda dataframe where each unique DocID (i and j) has a lambda
+#==============================================================================
 uniqueDocID<-c(unique(HIT[,1]),unique(HIT[,2]))
 set.seed(13)
 lambda.value<-round(runif(uniqueDocID),3)
 lambda.df<-data.frame(uniqueDocID, lambda.value)
 colnames(lambda.df)<-c('DocId', 'Lambda')
-#lambda dataframe
-head(lambda)
+head(lambda.df) #check it out
 
 #==============================================================================
-#Meta-HIT
-for(i in 1:nrow(HIT)){
-if(HIT$Choose[i]==0){
+#Meta-HIT: create a DF where DocIDi and DocIDj are combined by roww, not column
+#and change the "Choose" outcome for rows with DocIDJ (imply that DocIDj was chosen)
+#==============================================================================
+for(i in 1:nrow(HIT)){ #this loop will change the "Choose" column for
+if(HIT$Choose[i]==0){  #comparing DocIDj's to DocIDi's
   HIT$Choose2[i]=1
 } else if(HIT$Choose[i]==1){
   HIT$Choose2[i]=0
 }
 }
-
-
 sum(HIT$Choose==HIT$Choose2) #test that loop worked: should equal 0
-
-HIT2<-as.data.frame(cbind(HIT$DocIDj, HIT$DocIDi, HIT$Choose2))
-HIT<-HIT[,-4]
+#Flip the comparison between Docs i and j======================================
+HIT2<-as.data.frame(cbind(HIT$DocIDj, HIT$DocIDi, HIT$Choose2)) #HIT where j is compared to i
 colnames(HIT2)<-c("DocIDi", "DocIDj", "Choose")
-head(HIT,2)
-#===========================
+head(HIT2)# take a look
+HIT<-HIT[,-4] #remove the "Choose2" column
+
 metaHIT<-rbind(HIT, HIT2)
+head(metaHIT) #compare
+metaHIT[c(501:506), ] #compare
 
+metaHIT #this is the dataset
+#^metaHIT dataset complete=====================================================
+#==============================================================================
 
-#HERE WE GO.
-newHIT<-as.data.frame(cbind(HIT$DocIDi,HIT$DocIDj,HIT$Choose))
-colnames(newHIT)<-c("DocIDi", "DocIDj", "chosen")
-head(newHIT)
-#Meta-HIT
-for(i in 1:nrow(newHIT)){
-  if(newHIT$chosen[i]==0){
-    newHIT$chosen2[i]=1
-  } else if(newHIT$chosen[i]==1){
-    newHIT$chosen2[i]=0
-  }
-}
-
-sum(newHIT$chosen==newHIT$chosen2)
-newHIT<-newHIT[,-4] #remove inverse row of chosen2
-colnames(newHIT)<-c("DocIDi", "DocIDj", "Choose")
-
-newHIT2<-as.data.frame(cbind(newHIT$DocIDj, newHIT$DocIDi, newHIT$chosen2))
-
-colnames(newHIT2)<-c("DocIDi", "DocIDj", "Choose")
-head(newHIT2)
-head(newHIT)
-
-metaHIT1<-rbind(newHIT, newHIT2)
-
-newHIT1<-as.data.frame(cbind(newHIT$DocIDi, newHIT$DocIDj, newHIT$chosen))
-
-colnames(newHIT1)<-c("DocIDi", "DocIDj", "Choose")
-head(newHIT,2)
-
-newHIT<-subset(newHIT, select = -c(chosen2) )
-#===========================
-metaHIT<-rbind(newHIT, newHIT2)
-head(newHIT)
-head(newHIT)
 
 #making new hit data
-HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
-HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
-colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
-HIT
 
 id<-unique(HIT$DocIDi) 
 
 lambda<-data.frame(c(10:1),runif(10))
 colnames(lambda)<-c('DocId', 'Lambda')
 HIT$lambda<-runif(nrow(HIT))
-up_lambda<-bradleyterry(1,2,1922,lambda,HIT)
-newlambda<-lambda[lambda$DocId %in% id,]
+head(HIT)
 
 #Dataset to recover lambda############
 HIT #start with HIT data

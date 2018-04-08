@@ -34,9 +34,9 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
-  for(i in 1:length(subsetdata$DocIDj)){
-    lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[i],]
-    lambdavec<-c(lambdavec,lambdajsubset$Lambda)
+  for(i in 1:length(subsetdata$DocIDj)){ #the purpose of thsi loop is to extract lambda j values for use in the next loop
+    lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[i],] #This picks out the lambda j values for each of the elements of the subset dataset
+    lambdavec<-c(lambdavec,lambdajsubset$Lambda) #this building the vector for use
     }
   for (i in 1:nrow(subsetdata)){
     sumunit<-(1/(newlambda$Lambda+lambdavec[i])) #This creates the summation term unit by unit with the lambda i value and all of the respective lambda js 
@@ -49,25 +49,24 @@ bradleyterry<-function(a,b,id,lambda,dataset){
 
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
-  updatedlambda<-NULL
+  updatedlambda<-NULL #creating a vector for storing the updated lambda
   for (i in id){ # run loop for each vector in id
-    newlambda<-bradleyterry(a,b,i,lambda,dataset)
+    newlambda<-bradleyterry(a,b,i,lambda,dataset) #running the function above for each chosen doc id
     updatedlambda<-c(updatedlambda,newlambda) #update lambda
   }
   lambdajsave<-lambda[!lambda$DocId %in% id,]
   output<-cbind(id,updatedlambda) #bind id and updated lambda
-  output<-as.data.frame(output)
-  #output<-rbind(output,lambdajsave)
-  colnames(output)<-c('DocId','Lambda')
+  output<-as.data.frame(output) #putting the output in a format for later use
+  colnames(output)<-c('DocId','Lambda') #naming the outputs so they can be included right back in
   return(output)
 }
 
 #### FUNCTION 3 #######
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
     }
-  return(lambda)
+  return(lambda) #returns the output as the number of iterations determined by the user.
 }
 
 #####DATA GENERATING FUNCTION #####
@@ -83,25 +82,25 @@ lambda1<-as.data.frame(cbind(id,Lam))
 colnames(lambda1)<-c('DocId', 'Lambda')
 
 data.generation<-function(lambda,n){
-  output.lambda<-NULL
-  for (i in 1:n){
-    lams<-sample(lambda$DocId, 2)
-    lambdavec<-NULL
+  output.lambda<-NULL #creates a template for the output dataset
+  for (i in 1:n){#this is a for loop for creating data points, n size dataset
+    lams<-sample(lambda$DocId, 2)#this randmple selects two of the lambdas at random
+    lambdavec<-NULL #creates a templace for extracting the lambda values
     for (i in lams){
-      lambdavec<-c(lambdavec,lambda$Lambda[i])
+      lambdavec<-c(lambdavec,lambda$Lambda[i]) #this actually extracts the lambdas
     }
-    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2])
-    Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))
-    new.lambda<-cbind(lams[1],lams[2],Choose)
-    output.lambda<-rbind(output.lambda, new.lambda)
+    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2]) #this uses the lambdas in order to create a probability for selection
+    Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))#this chooses the document with the predetermined probability
+    new.lambda<-cbind(lams[1],lams[2],Choose) #now building our output
+    output.lambda<-rbind(output.lambda, new.lambda)#row binding with the template
   }
-  rownames(output.lambda)<-NULL
-  output.lambda<-as.data.frame(output.lambda)
-  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose")
-  return(output.lambda)
+  rownames(output.lambda)<-NULL #getting rid of the numbers for row name
+  output.lambda<-as.data.frame(output.lambda) #we do this because removing our row names made a sort of matrix
+  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose") #Making the output like our dataset
+  return(output.lambda) #outputs our data
 }
-sum(Choose)
-dataset<-data.generation(lambda,5000)
+
+dataset<-data.generation(lambda,500)
 bradleyterry.multid(1,1,id,lambda1,blah)
 iterative.bt(1,1,id,lambda1,blah,50)
 

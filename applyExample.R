@@ -8,5 +8,8 @@ dd
 obj1 <- ddply(.data=dd, .variables=c("dim1","dim2"), .fun=function(df) mean(df$v1))
 obj1
 #maybe?
-ddply(.data=dataset, .variables=c("DocIDi", "DocIDj"), .fun=bradleyterry(a,b,id,lambda,dataset))
+ddply(.data=dataset, .variables=c("id"), .fun=bradleyterry(1,0,id=1,lambda,dataset))
 #end example===================================================================
+
+#will apply work? The .variables argument is the column of the dataframe to iterate over,
+#but we want to interate over an argument of the function(id), not a dataset column

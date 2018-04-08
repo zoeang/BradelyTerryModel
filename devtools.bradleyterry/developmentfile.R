@@ -3,35 +3,57 @@ library(devtools)
 library(roxygen2)
 
 setwd("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry")
+setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry")
 current.code<-as.package("bradleyterry")
 load_all(current.code)
 document(current.code)
 test(current.code)
 
-docjdat<-c(2,seq(2,10,1), 1, seq(3,10,1), 1,2, seq(4,10,1),1, seq(1,3,1), seq(5,10,1),
-          1, seq(1,4,1), seq(6,10,1),
-           1,3,seq(1,5,1), seq(7,10,1),
-           1, 3,seq(1,6,1), seq(8,10,1),
-           1, 3,seq(1,7,1), seq(9,10,1),
-          1, 3, seq(1,9,1),1, seq(2,8,1))
-rep(c(1,0,1,1,0),20)
-#CREATE FAKE DATA
-dataset<-toydata<-data.frame(sort(rep(seq(1,10),10)), docjdat, rep(c(1,0,1,1,0),20))
-colnames(dataset)<-c("DocIDi", "DocIDj", "Choose")
-dataset
-table(toydata$DocIDj)
+#Data Generating Function======================================================
+#the function creates data using lambda values to generate actualized values 
+#of a document "winning" (Choose)
+set.seed(42)
+id<-1:10
+Lam<-runif(10)
+lambda<-as.data.frame(cbind(id,Lam))
+colnames(lambda)<-c('DocId', 'Lambda')
 
-#Remove rows where doci=docj
-#this is not irrelevant
-#toydata$delete<- (toydata$DocIDi==toydata$DocIDj)
-#toydata2<-subset(toydata,delete=="FALSE")
-#toydata2<-toydata2[,-4]
-#dataset<-toydata2
+id<-1:10
+Lam<-runif(10)
+lambda1<-as.data.frame(cbind(id,Lam))
+colnames(lambda1)<-c('DocId', 'Lambda')
+
+data.generation<-function(lambda,n){ #n size dataset
+  output.lambda<-NULL #creates a template for the output dataset
+  for (i in 1:n){#this is a for loop for creating data points, n size dataset
+    lams<-sample(lambda$DocId, 2)#this randomly selects two of the lambdas at random
+    lambdavec<-NULL #creates a templace for extracting the lambda values
+    for (i in lams){
+      lambdavec<-c(lambdavec,lambda$Lambda[i]) #this actually extracts the lambdas
+    }
+    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2]) #this uses the lambdas in order to create a probability for selection
+    Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))#this chooses the document with the predetermined probability
+    new.lambda<-cbind(lams[1],lams[2],Choose) #now building our output
+    output.lambda<-rbind(output.lambda, new.lambda)#row binding with the template
+  }
+  rownames(output.lambda)<-NULL #getting rid of the numbers for row name
+  output.lambda<-as.data.frame(output.lambda) #we do this because removing our row names made a sort of matrix
+  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose") #Making the output like our dataset
+  return(output.lambda) #outputs our data
+}
+
+dataset<-data.generation(lambda,500)
+
+bradleyterry.multid(1,1,id,lambda1,blah)
+iterative.bt(1,1,id,lambda1,blah,50)
+
+#==============================================================================
+#==============================================================================
 
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
-  newlambda<-lambda[lambda$DocId %in% id,]#this extratcs the specific lambda amount we want to upgrade for the purpose of the equation 
+  newlambda<-lambda[lambda$DocId %in% id,]#this extracts the specific DocID and lambda value we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
   for(i in 1:nrow(subsetdata)){ #the purpose of thsi loop is to extract lambda j values for use in the next loop
@@ -47,9 +69,6 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   return(output)
 }
 
-lambda
-iterative.bt(1,0,id,lambda1,blah, 100)
-
 #### FUNCTION 2 #######
 bradleyterry.multid<-function(a,b,id,lambda,dataset){
   updatedlambda<-NULL #creating a vector for storing the updated lambda
@@ -58,12 +77,12 @@ bradleyterry.multid<-function(a,b,id,lambda,dataset){
     updatedlambda<-c(updatedlambda,newlambda) #update lambda
   }
   lambdajsave<-lambda[!lambda$DocId %in% id,]
-  output<-cbind(id,updatedlambda) #bind id and updated lambda
-  output<-as.data.frame(output) #putting the output in a format for later use
+  output<-as.data.frame(cbind(id,updatedlambda)) #bind id and updated lambda as dataframe
+  #output<-as.data.frame(output) #original code; moved to row above #putting the output in a format for later use
   colnames(output)<-c('DocId','Lambda') #naming the outputs so they can be included right back in
   return(output)
 }
-
+bradleyterry.multid(1,0,id=c(3,4), lambda, dataset)
 #### FUNCTION 3 #######
 iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
@@ -72,51 +91,15 @@ iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   return(lambda) #returns the output as the number of iterations determined by the user.
 }
 
-#####DATA GENERATING FUNCTION #####
 
-id<-1:10
-Lam<-runif(10)
-lambda<-as.data.frame(cbind(id,Lam))
-colnames(lambda)<-c('DocId', 'Lambda')
-
-id<-1:10
-Lam<-runif(10,0,5)
-lambda1<-as.data.frame(cbind(id,Lam))
-colnames(lambda1)<-c('DocId', 'Lambda')
-
-data.generation<-function(lambda,n){
-  output.lambda<-NULL #creates a template for the output dataset
-  for (i in 1:n){#this is a for loop for creating data points, n size dataset
-    lams<-sample(lambda$DocId, 2)#this randmple selects two of the lambdas at random
-    lambdavec<-NULL #creates a templace for extracting the lambda values
-    for (i in lams){
-      lambdavec<-c(lambdavec,lambda$Lambda[i]) #this actually extracts the lambdas
-    }
-    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2]) #this uses the lambdas in order to create a probability for selection
-    Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))#this chooses the document with the predetermined probability
-    new.lambda<-cbind(lams[1],lams[2],Choose) #now building our output
-    if (Choose==1){
-      Choose<-0
-    }
-    else{Choose<-1}
-    new.lambda1<-cbind(lams[2],lams[1],Choose)
-    output.lambda<-rbind(output.lambda, new.lambda, new.lambda1)#row binding with the template
-  }
-  rownames(output.lambda)<-NULL #getting rid of the numbers for row name
-  output.lambda<-as.data.frame(output.lambda) #we do this because removing our row names made a sort of matrix
-  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose") #Making the output like our dataset
-  return(output.lambda) #outputs our data
-}
-
-blah<-data.generation(lambda,500)
-bradleyterry.multid(1,1,id,lambda1,blah)
-iterative.bt(1,1,id,lambda1,blah,100)
+#================================================================================
+#================================================================================
 
 #### DATA JACOB GAVE US
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
-HIT
+head(HIT)
 
 id<-unique(HIT$DocIDi) 
 

@@ -28,14 +28,6 @@ table(toydata$DocIDj)
 #toydata2<-toydata2[,-4]
 #dataset<-toydata2
 
-
-#create lambda data frame
-lambda<-data.frame(c(10:1),runif(10))
-colnames(lambda)<-c('DocId', 'Lambda')
-#consider for row 44
-which(HIT$DocIDj==subsetdata$DocIDj) #this gives the rows of HIT of the relevant docs
-
-id=1
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
@@ -54,35 +46,66 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   output<-(a-1+sum(subsetdata$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }
-bradleyterry(1,1,1,lambda1,dataset)
 
-lambdajsubset<-lambda[lambda$DocId %in% subsetdata$DocIDj[2],]
-lambdavec<-c(lambdavec,lambdajsubset$Lambda)
-nrow(q)
-dataset<-metaHIT
-subsetdata<-dataset[dataset$DocIDi %in% 5059,]
-newlambda<-lambda[lambda$DocId %in% 5059,]
+#### FUNCTION 2 #######
+bradleyterry.multid<-function(a,b,id,lambda,dataset){
+  updatedlambda<-NULL
+  for (i in id){ # run loop for each vector in id
+    newlambda<-bradleyterry(a,b,i,lambda,dataset)
+    updatedlambda<-c(updatedlambda,newlambda) #update lambda
+  }
+  lambdajsave<-lambda[!lambda$DocId %in% id,]
+  output<-cbind(id,updatedlambda) #bind id and updated lambda
+  output<-as.data.frame(output)
+  #output<-rbind(output,lambdajsave)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
+}
 
-bradleyterry(1,0,5059,lambda,metaHIT)
-bradleyterry.multid(1,0,id,lambda,metaHIT)
+#### FUNCTION 3 #######
+iterative.bt<-function(a,b,id,lambda,dataset, iterations){
+  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)
+    }
+  return(lambda)
+}
 
-lambda[lambda$DocId %in% subsetdata$DocIDj,]
+#####DATA GENERATING FUNCTION #####
 
-nums<-rownames(lambdajsubset)
-as.numeric(nums)
+id<-1:10
+Lam<-runif(10)
+lambda<-as.data.frame(cbind(id,Lam))
+colnames(lambda)<-c('DocId', 'Lambda')
 
-?which
-which(lambda$DocId==subsetdata$DocIDj)
-HIT
-lambda
-subsetdata<-HIT[HIT$DocIDi %in% 1786,]
-newlambda<-lambda[lambda$DocId %in% 1786,]
-bradleyterry(1,0,1,lambda,HIT)
-id<-HIT$DocIDi[1:100]
-id<-lambda$DocId
-bradleyterry(1,0,5059,lambda,metaHIT)
-bradleyterry.multid(1,0,id,lambda,metaHIT)
+id<-1:10
+Lam<-runif(10)
+lambda1<-as.data.frame(cbind(id,Lam))
+colnames(lambda1)<-c('DocId', 'Lambda')
 
+data.generation<-function(lambda,n){
+  output.lambda<-NULL
+  for (i in 1:n){
+    lams<-sample(lambda$DocId, 2)
+    lambdavec<-NULL
+    for (i in lams){
+      lambdavec<-c(lambdavec,lambda$Lambda[i])
+    }
+    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2])
+    Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))
+    new.lambda<-cbind(lams[1],lams[2],Choose)
+    output.lambda<-rbind(output.lambda, new.lambda)
+  }
+  rownames(output.lambda)<-NULL
+  output.lambda<-as.data.frame(output.lambda)
+  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose")
+  return(output.lambda)
+}
+sum(Choose)
+dataset<-data.generation(lambda,5000)
+bradleyterry.multid(1,1,id,lambda1,blah)
+iterative.bt(1,1,id,lambda1,blah,50)
+
+#### DATA JACOB GAVE US
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
@@ -118,101 +141,17 @@ HIT$p_i_not<-1-HIT$p_i #compliment of P(i beats J)
 for (i in 1:nrow(HIT)){
   #HIT$chosen[i]<-rbinorm(c(1,0),1,replace=T,prob=c(HIT$p_i[i],HIT$p_i_not[i]))
   HIT$chosen[i]<-rbinom(1,1,prob=c(HIT$p_i[i],HIT$p_i_not[i])) #rbinom simulation
+  
+  #trials with Jacob's data====================================
+  bradleyterry(1,1,1,lambda,dataset)
+  bradleyterry.multid(1,1,HIT$DocIDi,lambda,HIT)
+  iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
+  
+  newlambda<-bradleyterry(1,1,HIT$DocIDi,lambda,HIT)
+  newlambda1<-bradleyterry(1,1,DocIDi,newlambda,HIT)
+  bradleyterry(1,1,1,newlambda1,HIT)
+  iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
+  
+  load('/Users/benjaminschneider/Downloads/docInfo.Rdata')
+  head(docInfo)
 }
-
-
-#### FUNCTION 2 #######
-bradleyterry.multid<-function(a,b,id,lambda,dataset){
-  updatedlambda<-NULL
-  for (i in id){ # run loop for each vector in id
-    newlambda<-bradleyterry(a,b,i,lambda,dataset)
-    updatedlambda<-c(updatedlambda,newlambda) #update lambda
-  }
-  lambdajsave<-lambda[!lambda$DocId %in% id,]
-  output<-cbind(id,updatedlambda) #bind id and updated lambda
-  output<-as.data.frame(output)
-  #output<-rbind(output,lambdajsave)
-  colnames(output)<-c('DocId','Lambda')
-  return(output)
-}
-
-
-
-lambdajsave<-lambda[!lambda$DocId %in% id,]
-
-
-#### FUNCTION 3 #######
-iterative.bt<-function(a,b,id,lambda,dataset, iterations){
-  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)
-    }
-  return(lambda)
-}
-
-bradleyterry(1,1,1,lambda,dataset)
-bradleyterry.multid(1,1,id,lambda,dataset)
-x<-iterative.bt(1,0,id,lambda,metaHIT1,100)
-head(x)
-head(lambda)
-
-id<-1:10
-Lam<-runif(10,0,10)
-lambda<-as.data.frame(cbind(id,Lam))
-colnames(lambda)<-c('DocId', 'Lambda')
-
-newlambda<-bradleyterry(1,1,id,lambda,dataset)
-newlambda1<-bradleyterry(1,1,id,newlambda,dataset)
-bradleyterry(1,1,1,newlambda1,dataset)
-iterative.bt(1,1,id,lambda,dataset,1)
-
-#trials with Jacob's data====================================
-bradleyterry(1,1,1,lambda,dataset)
-bradleyterry.multid(1,1,HIT$DocIDi,lambda,HIT)
-iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
-
-newlambda<-bradleyterry(1,1,HIT$DocIDi,lambda,HIT)
-newlambda1<-bradleyterry(1,1,DocIDi,newlambda,HIT)
-bradleyterry(1,1,1,newlambda1,HIT)
-iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
-
-load('/Users/benjaminschneider/Downloads/docInfo.Rdata')
-head(docInfo)
-
-
-
-
-#####DATA GENERATING FUNCTION
-
-id<-1:10
-Lam<-runif(10)
-lambda<-as.data.frame(cbind(id,Lam))
-colnames(lambda)<-c('DocId', 'Lambda')
-
-id<-1:10
-Lam<-runif(10)
-lambda1<-as.data.frame(cbind(id,Lam))
-colnames(lambda1)<-c('DocId', 'Lambda')
-
-n=10000
-data.generation<-function(lambda,n){
-  output.lambda<-NULL
-  for (i in 1:n){
-    lams<-sample(lambda$DocId, 2)
-    lambdavec<-NULL
-    for (i in lams){
-      lambdavec<-c(lambdavec,lambda$Lambda[i])
-    }
-    prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2])
-    Choose <- sample(c(0,1), 10, replace = TRUE, prob = c(1-prob, prob))
-    new.lambda<-cbind(lams[1],lams[2],Choose)
-    output.lambda<-rbind(output.lambda, new.lambda)
-  }
-  rownames(output.lambda)<-NULL
-  output.lambda<-as.data.frame(output.lambda)
-  colnames(output.lambda)<-c("DocIDi","DocIDj","Choose")
-  return(output.lambda)
-}
-sum(Choose)
-dataset<-data.generation(lambda,5000)
-bradleyterry.multid(1,1,id,lambda1,blah)
-iterative.bt(1,1,id,lambda1,blah,50)

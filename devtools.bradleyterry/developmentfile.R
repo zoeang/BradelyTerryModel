@@ -107,9 +107,10 @@ HIT$lambda<-runif(nrow(HIT))
 up_lambda<-bradleyterry(1,2,1922,lambda,HIT)
 newlambda<-lambda[lambda$DocId %in% id,]
 
-#Dataset to recover lambda############
+#Dataset to recover lambda############ #IF THIS PART IS DATA GENERATING PART, I THINK THIS DOES WHAT WE WANT TO DO. (LIM)
 HIT #start with HIT data
-HIT$lambda_i<-rep(runif(50), each=2) #create 100 random values for lambda_i
+HIT$lambda_i<-rep(runif(50), each=2) #create 100 random values for lambda_i # THIS ONLY WORKS IF LAMBDA IS IS SORTED.
+#I THINK WE NEED TO FIND A BETTER WAY OTHERWISE, WE HAVE TO SORT DATA BEFORE RUN A FUNCTION. (LIM)
 
 #fake to match docid_j
 DocIDj<-unique(HIT$DocIDj)
@@ -117,7 +118,7 @@ lambda_j<-runif(length(unique(HIT$DocIDj)))
 fake<-cbind(DocIDj,lambda_j)
 
 #merge
-HIT <- merge(fake,HIT,by="DocIDj")
+HIT <- merge(fake,HIT,by="DocIDj") 
 
 
 #probablity of choosing doc_i over doc_j
@@ -140,6 +141,6 @@ for (i in 1:nrow(HIT)){
   bradleyterry(1,1,1,newlambda1,HIT)
   iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
   
-  load('/Users/benjaminschneider/Downloads/docInfo.Rdata')
+  load('/Users/benjaminschneider/Downloads/docInfo.Rdata') # I dont get this part. (LIM)
   head(docInfo)
 }

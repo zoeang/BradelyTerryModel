@@ -14,9 +14,19 @@ ddply(.data=dataset, .variables=c("id"), .fun=bradleyterry(1,0,id=3,lambda,datas
 #will apply work? The .variables argument is the column of the dataframe to iterate over,
 #but we want to interate over an argument of the function(id), not a dataset column
 head(dataset)
+
+bradleyterry.multid(1,1,id,lambda,dataset)
+bradleyterry.multid.apply(1,1,id,lambda,dataset)
+
 sapply(unique(dataset$DocIDi), function(x) bradleyterry(1,0,id=x, lambda, dataset))
+
+
 bradleyterry.multid.apply<-function(a, b, id, lambda, dataset){
-  sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset))
+  output<-sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset))
+  output<-cbind(id,output)
+  output<-as.data.frame(output)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
 }
 
 sapply(unique(dataset$DocIDi), function(x) paste(x, bradleyterry(1,0,id=x, lambda, dataset)))

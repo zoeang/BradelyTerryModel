@@ -13,8 +13,8 @@ colnames(lambdadum)<-c('DocId', 'Lambda')
 data.generation<-function(lambda,n){ #n size dataset
   output.lambda<-NULL #creates a template for the output dataset
   for (i in 1:n){#this is a for loop for creating data points, n size dataset
-    lams<-sample(lambda$DocId, 2)#this randomly selects two of the lambdas at random
-    lambdavec<-NULL #creates a templace for extracting the lambda values
+    lams<-sample(lambda$DocId, 2)#this randomly selects two of the lambdas
+    lambdavec<-NULL #creates a template for extracting the lambda values
     for (i in lams){
       lambdavec<-c(lambdavec,lambda$Lambda[i]) #this actually extracts the lambdas
     }
@@ -59,8 +59,7 @@ bradleyterry<-function(a,b,id,lambda,dataset){
 ?sapply
 bradleyterry.multid.apply<-function(a, b, id, lambda, dataset){
   output<-sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset)) #this uses an apply function to run the bradley terry model for all of our document ids
-  output<-cbind(id,output) #this is just reformating the data for later iterations
-  output<-as.data.frame(output) #this is just reformating the data for later iterations
+  output<-as.data.frame(cbind(id,output)) #this is just reformating the data for later iterations
   colnames(output)<-c('DocId','Lambda') #this is just reformating the data for later iterations
   return(output)
 }

@@ -1,15 +1,14 @@
 #### This is for the meeting with Jacob ####
 
 #here we are creating our "true lambdas"
-id<-1:10
-Lam<-runif(10)
+id<-1:15
+Lam<-runif(15,1,10)
 lambda<-as.data.frame(cbind(id,Lam))
 colnames(lambda)<-c('DocId', 'Lambda')
 
 #these lambdas are just dummy values to plug in, they can be literally anything other than 0s
-lam<-runif(10)
-lambda1<-as.data.frame(cbind(id,lam))
-colnames(lambda1)<-c('DocId', 'Lambda')
+lambdadum<-as.data.frame(cbind(id,.5))
+colnames(lambdadum)<-c('DocId', 'Lambda')
 
 data.generation<-function(lambda,n){ #n size dataset
   output.lambda<-NULL #creates a template for the output dataset
@@ -20,7 +19,7 @@ data.generation<-function(lambda,n){ #n size dataset
       lambdavec<-c(lambdavec,lambda$Lambda[i]) #this actually extracts the lambdas
     }
     prob<-lambdavec[1]/(lambdavec[1]+lambdavec[2]) #this uses the lambdas in order to create a probability for selection
-    Choose <- sample(c(0,1), 1, replace = TRUE, prob = c(1-prob, prob))#this chooses the document with the predetermined probability
+    Choose <- rbinom(1,1,prob)#this chooses the document with the predetermined probability
     new.lambda<-cbind(lams[1],lams[2],Choose) #now building our output
     output.lambda<-rbind(output.lambda, new.lambda)#row binding with the template
   }
@@ -31,7 +30,7 @@ data.generation<-function(lambda,n){ #n size dataset
 }
 
 #now we are going to create our dataset to run into our functions below
-dataset<-data.generation(lambda,5000)
+dataset<-data.generation(lambda,3000)
 
 #==============================================================================
 #==============================================================================
@@ -57,7 +56,7 @@ bradleyterry<-function(a,b,id,lambda,dataset){
 
 
 ##### Function 2 #####
-
+?sapply
 bradleyterry.multid.apply<-function(a, b, id, lambda, dataset){
   output<-sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset)) #this uses an apply function to run the bradley terry model for all of our document ids
   output<-as.data.frame(cbind(id,output)) #this is just reformating the data for later iterations
@@ -103,7 +102,7 @@ iterative.bt.with.benchmark<-function(a,b,id,lambda,dataset,iterations){
 
 #### Practical experiments
 
-iterative.bt.with.benchmark(2,2,id,lambda1,dataset,1000) #this benchmark function will print the average difference between the previous and new lambda and print this every 25 iterations until its under the threshold
+lambda.update<-iterative.bt.with.benchmark(2,2,id,lambda1,dataset,1000) #this benchmark function will print the average difference between the previous and new lambda and print this every 25 iterations until its under the threshold
 lambda.update<-iterative.bt(2,2,id,lambda1,dataset,1000) #this doesn't print benchmark but does the math still
 
 rank<-order(lambda$Lambda,lambda$DocId) #this rank orders our lambdas we used to generate the data
@@ -114,3 +113,9 @@ cbind(lambda.update,rank2) #here we can see the new ranks
 #therefore, we can see that with a large enough dataset, we can derive the exact order of the lambdas we put in!
 
 #the key here is just that you have a large enough dataset, and you have enough iterations. Thankfully one of those is taken care of by the code.
+plot(rank,rank2)
+plot(lambda$Lambda,lambda.update$Lambda)
+?qqplot
+qqplot(lambda$Lambda,lambda.update$Lambda)
+cor(lambda$Lambda,lambda.update$Lambda)
+cor(rank,rank2)

@@ -40,9 +40,14 @@ data.generation<-function(lambda,n){ #n size dataset
   return(output.lambda) #outputs our data
 }
 
-dataset<-data.generation(lambda,750)
+dataset<-data.generation(lambda,500)
 
-newlam1<-iterative.bt(1,1,id,lambda1,dataset,2000)
+library(microbenchmark)
+microbenchmark(bradleyterry.multid(1,1,id,lambda,dataset),times=50)
+microbenchmark(bradleyterry.multid.apply(1,1,id,lambda1,dataset),times=50)
+iterative.bt.apply(1,1,id,lambda1,dataset,150)
+
+newlam1<-iterative.bt(1,1,id,lambda1,dataset,200)
 sum(lambda$Lambda-newlam$Lambda)
 
 #==============================================================================
@@ -80,12 +85,64 @@ bradleyterry.multid<-function(a,b,id,lambda,dataset){
   colnames(output)<-c('DocId','Lambda') #naming the outputs so they can be included right back in
   return(output)
 }
+bradleyterry.multid.apply<-function(a, b, id, lambda, dataset){
+  output<-sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset))
+  output<-cbind(id,output)
+  output<-as.data.frame(output)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
+}
+
 bradleyterry.multid(1,0,id=c(3,4), lambda, dataset)
+
+lambda1<-bradleyterry.multid(1,1,id,lambda,dataset)
+iterative.bt(1,1,id,lambda,dataset,1000)
+
+sapply(1:5, function(x) bradleyterry.multid.apply(a,b,id,lambda=x, dataset))
+?sapply
+
 #### FUNCTION 3 #######
-iterative.bt<-function(a,b,id,lambda,dataset, iterations){
+iterative.bt.apply<-function(a,b,id,lambda,dataset,sim){
+  dapply(1:sim, function(x) bradleyterry.multid.apply(a,b,id,lambda=x, dataset))
+}
+
+iterative.bt(1,1,id,lambda,dataset,5)
+iterative.bt.apply(1,1,id,lambda,dataset,5)
+
+1000%%10
+
+iterative.bt<-function(a,b,id,lambda,dataset,iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)#run the code above for one doc id, a number of times determined by user
     }
+  return(lambda) #returns the output as the number of iterations determined by the user.
+}
+
+iterative.bt<-function(a,b,id,lambda,dataset,iterations){
+  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
+    lambda1<-bradleyterry.multid(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
+    if (all(abs(lambda1$Lambda-lambda$Lambda)<1e-8)){
+      break}
+    else{
+      if (i%%10=0){
+        lambda2<-lambda
+        lambda<-lambda1
+        print(lambda2$Lambda-lambda1$Lambda)
+      }
+      else{
+      lambda<-lambda1
+      }
+    }
+  }
+  return(lambda1) #returns the output as the number of iterations determined by the user.
+}
+
+iterative.bt(1,1,id,lambda,dataset,100)
+
+iterative.bt.apply<-function(a,b,id,lambda,dataset, iterations){
+  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
+    lambda<-bradleyterry.multid.apply(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
+  }
   return(lambda) #returns the output as the number of iterations determined by the user.
 }
 

@@ -42,14 +42,6 @@ data.generation<-function(lambda,n){ #n size dataset
 
 dataset<-data.generation(lambda,500)
 
-library(microbenchmark)
-microbenchmark(bradleyterry.multid(1,1,id,lambda,dataset),times=50)
-microbenchmark(bradleyterry.multid.apply(1,1,id,lambda1,dataset),times=50)
-iterative.bt.apply(1,1,id,lambda1,dataset,150)
-
-newlam1<-iterative.bt(1,1,id,lambda1,dataset,200)
-sum(lambda$Lambda-newlam$Lambda)
-
 #==============================================================================
 #==============================================================================
 
@@ -73,21 +65,8 @@ bradleyterry<-function(a,b,id,lambda,dataset){
 }
 
 #### FUNCTION 2 #######
-bradleyterry.multid<-function(a,b,id,lambda,dataset){
-  updatedlambda<-NULL #creating a vector for storing the updated lambda
-  for (i in id){ # run loop for each vector in id
-    newlambda<-bradleyterry(a,b,i,lambda,dataset) #running the function above for each chosen doc id
-    updatedlambda<-c(updatedlambda,newlambda) #update lambda
-  }
-  lambdajsave<-lambda[!lambda$DocId %in% id,]
-  output<-as.data.frame(cbind(id,updatedlambda)) #bind id and updated lambda as dataframe
-  #output<-as.data.frame(output) #original code; moved to row above #putting the output in a format for later use
-  colnames(output)<-c('DocId','Lambda') #naming the outputs so they can be included right back in
-  return(output)
-}
 
-# 2a
-bradleyterry.multid.apply<-function(a, b, id, lambda, dataset){
+bradleyterry.multid<-function(a, b, id, lambda, dataset){
   output<-sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset))
   output<-cbind(id,output)
   output<-as.data.frame(output)
@@ -95,52 +74,28 @@ bradleyterry.multid.apply<-function(a, b, id, lambda, dataset){
   return(output)
 }
 
-sapply(1:5, function(x) bradleyterry.multid.apply(a,b,id,lambda=x, dataset))
-?sapply
-
 #### FUNCTION 3 #######
 
-#beta function
-iterative.bt.apply<-function(a,b,id,lambda,dataset,sim){
-  dapply(1:sim, function(x) bradleyterry.multid.apply(a,b,id,lambda=x, dataset))
-}
-
-#3a
-iterative.bt<-function(a,b,id,lambda,dataset,iterations){
+#3 Basic function
+iterative.bt<-function(a,b,id,lambda,dataset, iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
-    lambda<-bradleyterry.multid(a,b,id,lambda,dataset)#run the code above for one doc id, a number of times determined by user
-    }
+    lambda<-bradleyterry.multid(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
+  }
   return(lambda) #returns the output as the number of iterations determined by the user.
 }
 
-#3b
-iterative.bt<-function(a,b,id,lambda,dataset,iterations){
+#basic function with tolerance level
+iterative.bt.tol<-function(a,b,id,lambda,dataset,iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
     lambda1<-bradleyterry.multid(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
     if (all(abs(lambda1$Lambda-lambda$Lambda)<1e-8)){
       break}
-    else{
-      if (i%%10==0){
-        lambda2<-lambda
-        lambda<-lambda1
-        print(lambda2$Lambda-lambda1$Lambda)
-      }
       else{
-      lambda<-lambda1
+        lambda<-lambda1
       }
-    }
   }
   return(lambda1) #returns the output as the number of iterations determined by the user.
 }
-
-#3c
-iterative.bt.apply<-function(a,b,id,lambda,dataset, iterations){
-  for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
-    lambda<-bradleyterry.multid.apply(a,b,id,lambda,dataset) #run the code above for one doc id, a number of times determined by user
-  }
-  return(lambda) #returns the output as the number of iterations determined by the user.
-}
-
 
 #================================================================================
 #================================================================================
@@ -148,51 +103,48 @@ iterative.bt.apply<-function(a,b,id,lambda,dataset, iterations){
 #### DATA JACOB GAVE US
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
-colnames(HIT)<-c("DocIDi", "DocIDj", "Choose")
-head(HIT)
 
-id<-unique(HIT$DocIDi) 
-
-lambda<-data.frame(c(10:1),runif(10))
-colnames(lambda)<-c('DocId', 'Lambda')
-HIT$lambda<-runif(nrow(HIT))
-up_lambda<-bradleyterry(1,2,1922,lambda,HIT)
-newlambda<-lambda[lambda$DocId %in% id,]
-
-#Dataset to recover lambda############ #IF THIS PART IS DATA GENERATING PART, I THINK THIS DOES WHAT WE WANT TO DO. (LIM)
-HIT #start with HIT data
-HIT$lambda_i<-rep(runif(50), each=2) #create 100 random values for lambda_i # THIS ONLY WORKS IF LAMBDA IS IS SORTED.
-#I THINK WE NEED TO FIND A BETTER WAY OTHERWISE, WE HAVE TO SORT DATA BEFORE RUN A FUNCTION. (LIM)
-
-#fake to match docid_j
-DocIDj<-unique(HIT$DocIDj)
-lambda_j<-runif(length(unique(HIT$DocIDj)))
-fake<-cbind(DocIDj,lambda_j)
-
-#merge
-HIT <- merge(fake,HIT,by="DocIDj") 
-
-
-#probablity of choosing doc_i over doc_j
-HIT$p_i<-HIT$lambda_i/(HIT$lambda_i+HIT$lambda_j) #calculate the prob that doc i beats doc j
-HIT$p_i_not<-1-HIT$p_i #compliment of P(i beats J)
-
-
-#choosing what is chosen
-for (i in 1:nrow(HIT)){
-  #HIT$chosen[i]<-rbinorm(c(1,0),1,replace=T,prob=c(HIT$p_i[i],HIT$p_i_not[i]))
-  HIT$chosen[i]<-rbinom(1,1,prob=c(HIT$p_i[i],HIT$p_i_not[i])) #rbinom simulation
-  
-  #trials with Jacob's data====================================
-  bradleyterry(1,1,1,lambda,dataset)
-  bradleyterry.multid(1,1,HIT$DocIDi,lambda,HIT)
-  iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
-  
-  newlambda<-bradleyterry(1,1,HIT$DocIDi,lambda,HIT)
-  newlambda1<-bradleyterry(1,1,DocIDi,newlambda,HIT)
-  bradleyterry(1,1,1,newlambda1,HIT)
-  iterative.bt(1,1,HIT$DocIDi,lambda,HIT,1)
-  
-  load('/Users/benjaminschneider/Downloads/docInfo.Rdata') # I dont get this part. (LIM)
-  head(docInfo)
+datatransform<-function(HIT){
+  vec<-rep(1:2, 250)
+  HIT<-cbind(HIT,vec)
+  HIT<-as.data.frame((HIT))
+  colnames(HIT)<-c("comparison_id" ,"document_id", "result","num")
+  DocIDi<-NULL
+  DocIDj<-NULL
+  Choose<-NULL
+  for (i in 1:nrow(HIT)){
+    if (HIT$num[i]==2){
+  DocIDj<-c(DocIDj,HIT$document_id[i])
+    }
+    else{
+  DocIDi<-c(DocIDi,HIT$document_id[i])
+  Choose<-c(Choose,HIT$result[i])
+    }
+  }
+  newHIT<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
+  DocIDi<-NULL
+  DocIDj<-NULL
+  Choose<-NULL
+  for (i in 1:nrow(HIT)){
+    if (HIT$num[i]==1){
+    DocIDj<-c(DocIDj,HIT$document_id[i])
+    }
+    else{
+    DocIDi<-c(DocIDi,HIT$document_id[i])
+    Choose<-c(Choose,HIT$result[i])
+    }
+  }
+  newHIT2<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
+  metaHIT<-rbind(newHIT,newHIT2)
+  return(metaHIT)
 }
+
+metaHIT<-datatransform(HIT)
+
+DocId<-unique(HIT$document_id)
+Lambda<-runif(50)
+lambda<-cbind(DocId,Lambda)
+lambda<-as.data.frame(lambda)
+
+library(microbenchmark)
+microbenchmark(iterative.bt(1,1,DocId,lambda,metaHIT,2500),times=5)

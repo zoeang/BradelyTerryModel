@@ -1,5 +1,8 @@
 library(Rcpp)
+#include<Rcpp.h>
+#using namespace Rcpp;
 
+// [[Rcpp::export]]
 cppFunction('double bradleyterry(int a; int b, vec id; DataFrame lambda; DataFrame dataset ){
   DataFrame subsetdata=dataset[dataset['DocIDi'] %in% id,];
   DataFrame newlambda=lambda[lambda['DocId'] %in% id,];

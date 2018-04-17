@@ -2,7 +2,7 @@ library(Rcpp)
 
 cppFunction('double bradleyterry(int a; int b, vec id; DataFrame lambda; DataFrame dataset ){
   DataFrame subsetdata=dataset[dataset['DocIDi'] %in% id,];
-  DataFrame newlambda=lambda[lambda$DocId %in% id,];
+  DataFrame newlambda=lambda[lambda['DocId'] %in% id,];
   NumericVector sumvec=;
   NumericVector lambdavec=; 
 

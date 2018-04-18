@@ -18,8 +18,8 @@ cppFunction(
 
 
 cppFunction(
-  data.gen<-function(NumericVector lambda,NumericVector b,NumericVector id,NumericVector lambda,dataset )
-  subsetdata<-std::fin  
+  Brad<-function(NumericVector lambda,NumericVector b,NumericVector id,NumericVector lambda,dataset )
+  subsetdata<-std::fin[]
     
     
     

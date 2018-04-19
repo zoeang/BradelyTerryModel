@@ -21,6 +21,9 @@ lam<-runif(10)
 lambda1<-as.data.frame(cbind(id,.5))
 colnames(lambda1)<-c('DocId', 'Lambda')
 
+
+
+
 data.generation<-function(lambda,n){ #n size dataset
   output.lambda<-NULL #creates a template for the output dataset
   for (i in 1:n){#this is a for loop for creating data points, n size dataset
@@ -44,6 +47,17 @@ dataset<-data.generation(lambda,500)
 
 #==============================================================================
 #==============================================================================
+
+datatrans<-function(docid,dataset){
+  outputlist<-NULL
+  outputlist<as.list(outputlist)
+  for (i in docid){  
+  subsetdata1<-dataset[dataset$DocIDi %in% i,]
+  outputlist<-c(outputlist,subsetdata1)}
+  return(outputlist)
+}
+
+datatrans(DocId,HIT2)
 
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){

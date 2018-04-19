@@ -139,12 +139,106 @@ datatransform<-function(HIT){
   return(metaHIT)
 }
 
-metaHIT<-datatransform(HIT)
+head(newHIT2)
+
+datatransform<-function(HIT){
+  vec<-rep(1:2, 250)
+  HIT<-cbind(HIT,vec)
+  HIT<-as.data.frame((HIT))
+  colnames(HIT)<-c("comparison_id" ,"document_id", "result","num")
+  DocIDi<-NULL
+  DocIDj<-NULL
+  Choose<-NULL
+  for (i in 1:nrow(HIT)){
+    if (HIT$num[i]==2){
+      DocIDj<-c(DocIDj,HIT$document_id[i])
+    }
+    else{
+      DocIDi<-c(DocIDi,HIT$document_id[i])
+      Choose<-c(Choose,HIT$result[i])
+    }
+  }
+  newHIT<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
+  DocIDi<-NULL
+  DocIDj<-NULL
+  Choose<-NULL
+  for (i in 1:nrow(HIT)){
+    if (HIT$num[i]==1){
+      DocIDj<-c(DocIDj,HIT$document_id[i])
+    }
+    else{
+      DocIDi<-c(DocIDi,HIT$document_id[i])
+      Choose<-c(Choose,HIT$result[i])
+    }
+  }
+  newHIT2<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
+  metaHIT<-rbind(newHIT,newHIT2)
+  return(newHIT)
+}
+
+HIT2<-datatransform(HIT)
+
+head(HIT)
+head(newHIT)
+head(newHIT2)
 
 DocId<-unique(HIT$document_id)
+DocId<-sort(DocId, decreasing = F)
 Lambda<-runif(50)
 lambda<-cbind(DocId,Lambda)
 lambda<-as.data.frame(lambda)
 
-library(microbenchmark)
-microbenchmark(iterative.bt(1,1,DocId,lambda,metaHIT,2500),times=5)
+recovered<-iterative.bt.tol(1,1,DocId,lambda,metaHIT,3500)
+recovered1<-iterative.bt.tol(1,1,DocId,lambda,newHIT,3500)
+recovered2<-iterative.bt.tol(1,1,DocId,lambda,newHIT2,3500)
+
+recovered<-recovered0
+
+
+#this ranks our data and Dave and Jacobs data from their model
+rank<-order(log(recovered$Lambda),recovered$DocId) #this rank orders our lambdas we used to generate the data
+recovdat<-cbind(log(recovered$Lambda),recovered$DocId,rank) #here we can see the lambdas with our ranks
+recovdat<-as.data.frame(recovdat)
+colnames(recovdat)<-c("Lambda","DocId","rank")
+rank2<-order(comparison$Lambda,comparison$DocId) #this rank orders the lambdas we got from all of our iterations
+compdat<-cbind(comparison,rank2)
+
+cor(recovdat$rank,compdat$rank2)
+cor(recovdat$Lambda,apiTest$rating)
+cor(recovdat$Lambda,comparison$Lambda)
+
+plot(recovdat$Lambda,apiTest$rating)
+plot(recovdat$Lambda,comparison$Lambda)
+
+
+cor(log(recovered$Lambda),comparison$Lambda)
+cor(r1$Lambda,apiTest$rating[-20,])
+plot(log(recovered$Lambda),comparison$Lambda)
+
+plot(recovdat$Lambda,apiTest$rating)
+plot(recovdat$Lambda,comparison$Lambda)
+
+cbind(recovdat$DocId, apiTest$id)
+plot(recovdat$Lambda, apiTest$rating)
+plot(post.lambda, apiTest$rating)
+
+#this gets the estimate from Dave and Jacob
+library(readr)
+apiTest <- read_csv("~/Documents/GitHub/BradelyTerryModel/apiTest.csv")
+apiTest$id
+apiTest$rating
+install.packages("rstan")
+library(rstan)
+setwd("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/")
+load("fitExperiment2.7")
+#We need to compare the output of our model to pst.lambda, the output of their stan model
+post.lambda = summary(fitExperiment2.7)$summary[paste0('a[',1:50,']'),'mean']
+comparison<-cbind(apiTest$id,post.lambda)
+
+comparison<-as.data.frame(comparison)
+colnames(comparison)<-c("DocId", "Lambda")
+
+dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+HIT<-dat[,3:5]
+head(dat2)
+sort(unique(dat2$document_id), decreasing = F)

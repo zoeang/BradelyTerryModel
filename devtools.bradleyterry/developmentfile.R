@@ -56,14 +56,25 @@ datatrans<-function(docid,dataset){
   #for(i in 1:length(docid)){
     outputlist[[i]]<-subsetdata1
   #}
-  
   }
   return(outputlist)
 }
-
 test1<-datatrans(DocId,HIT2)
 test1[[4990]]
-head(test1)
+datatrans<-function(docid,lambda){
+  lambdalist<-NULL
+  lambdalist<-as.list(lambdalist)
+  for (i in docid){  
+    subsetdata2<-lambda[lambda$DocId %in% i,]
+    #for(i in 1:length(docid)){
+    lambdalist[[i]]<-subsetdata2
+    #}
+  }
+  return(lambdalist)
+}
+
+test2<-datatrans(DocId,lambda)
+test2[[4991]]$DocId
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at

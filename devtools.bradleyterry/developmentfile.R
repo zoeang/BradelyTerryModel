@@ -50,15 +50,20 @@ dataset<-data.generation(lambda,500)
 
 datatrans<-function(docid,dataset){
   outputlist<-NULL
-  outputlist<as.list(outputlist)
+  outputlist<-as.list(outputlist)
   for (i in docid){  
   subsetdata1<-dataset[dataset$DocIDi %in% i,]
-  outputlist<-c(outputlist,subsetdata1)}
+  #for(i in 1:length(docid)){
+    outputlist[[i]]<-subsetdata1
+  #}
+  
+  }
   return(outputlist)
 }
 
-datatrans(DocId,HIT2)
-
+test1<-datatrans(DocId,HIT2)
+test1[[4990]]
+head(test1)
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
@@ -194,7 +199,9 @@ comparison<-cbind(apiTest$id,post.lambda)
 comparison<-as.data.frame(comparison)
 colnames(comparison)<-c("DocId", "Lambda")
 
+dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+
 dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 HIT<-dat[,3:5]
-head(dat2)
+
 sort(unique(dat2$document_id), decreasing = F)

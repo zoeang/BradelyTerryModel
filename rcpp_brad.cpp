@@ -49,24 +49,31 @@ DataFrame ex_fun2(DataFrame x, IntegerVector ids) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //this is brad
-double brad(NumericVector lambda,NumericVector b,NumericVector id, DataFrame lambda, DataFrame dataset){
-  DataFrame subsetdata = ex_fun1(dataset,id);
-  DataFrame newlambda = ex_fun2(lambda,id);
-  sumvec=R_Nilvalue;
-  lambdavec=R_Nilvalue;
-  NumericVector n= subsetdata.nrows(subsetdata["DocIDj"]);
-  NumericVector n2= subsetdata.nrow(subsetdata);
+//calling r function in rcpp
+NumericVector callFunction(NumericVector x, Function f) {
+  NumericVector res = f(x);
+  return res;
+}
+//////
+double brad(int a,int b,int id, DataFrame lambda, DataFrame dataset){
+  //DataFrame subsetdata = ex_fun1(dataset,id);
+  //DataFrame newlambda = ex_fun2(lambda,id);
+  DataFrame subsetdata = dataset;
+  DataFrame newlambda = lambda;
+  DataFrame sumvec = DataFrame::create( Named("",R_NilValue));
+  DataFrame lambdavec = DataFrame::create( Named("",R_NilValue));
+  //NumericVector n= subsetdata.nrow();
+  NumericVector n= lambda.nrow();
+  //for(int i=0; i<n; i++){
+  //  lambdajsubset = ex_fun2[lambda["DocIDi"], subsetdata["DocIDi"][i]]; //Is this work? [i]
+  //  NumericVector lambdavec=c(lambdavec,lambdajsubset["Lambda"]); //c() in R
+  //}
   for(int i=0; i<n; i++){
-    lambdajsubset = ex_fun2[lambda["DocIDi"], subsetdata["DocIDi"][i]]; //Is this work? [i]
-    NumericVector lambdavec=c(lambdavec,lambdajsubset["Lambda"]); //c() in R
+    NumericVector sumunit=(1/(newlambda["Lambda"] + lambdavec[i]));
+    NumericVector sumvec=c(sumvec,sumunit); // as.vector ? 
   }
-  for(int i=0; i<n2; i++){
-    NumericVector sumunit=(1/(newlambda["Lambda"]+lambdavec[i]));
-    NumericVector sumvec=as.vector(c(sumvec,sumunit)); // as.vector ? 
-  }
-  NumericVector summationterm<-sum(sumvec); 
-    
-    NumericVector output<-(a-1+sum(subsetdata["Choose"]))/(b+summationterm); 
+  NumericVector summationterm=sum(sumvec); 
+  NumericVector output=(a-1+sum(subsetdata["Choose"]))/(b+summationterm); 
     return(output);
 }
 

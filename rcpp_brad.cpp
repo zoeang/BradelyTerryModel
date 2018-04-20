@@ -55,26 +55,24 @@ NumericVector callFunction(NumericVector x, Function f) {
   return res;
 }
 //////
+
 double brad(int a,int b,int id, DataFrame lambda, DataFrame dataset){
-  //DataFrame subsetdata = ex_fun1(dataset,id);
-  //DataFrame newlambda = ex_fun2(lambda,id);
   DataFrame subsetdata = dataset;
   DataFrame newlambda = lambda;
-  DataFrame sumvec = DataFrame::create( Named("",R_NilValue));
-  DataFrame lambdavec = DataFrame::create( Named("",R_NilValue));
-  //NumericVector n= subsetdata.nrow();
-  NumericVector n= lambda.nrow();
-  //for(int i=0; i<n; i++){
-  //  lambdajsubset = ex_fun2[lambda["DocIDi"], subsetdata["DocIDi"][i]]; //Is this work? [i]
-  //  NumericVector lambdavec=c(lambdavec,lambdajsubset["Lambda"]); //c() in R
+  IntegerVector lam = newlambda["Lambda"];
+  DataFrame sumvec = R_NilValue;
+  DataFrame lambdavec =R_NilValue;
+
+  int n = newlambda.size();
+  //for( int i = 0; i < n; ++i ){
+   //// NumericVector sums = sum(lam);
+   // NumericVector sumunit = (1/ sums);
   //}
-  for(int i=0; i<n; i++){
-    NumericVector sumunit=(1/(newlambda["Lambda"] + lambdavec[i]));
-    NumericVector sumvec=c(sumvec,sumunit); // as.vector ? 
-  }
-  NumericVector summationterm=sum(sumvec); 
+  NumericVector sums = sum(lam);
+  NumericVector sumunit = (1/ sums);
+  NumericVector summationterm= sum(sumvec); 
   NumericVector output=(a-1+sum(subsetdata["Choose"]))/(b+summationterm); 
-    return(output);
+  return(output);
 }
 
 // You can include R code blocks in C++ files processed with sourceCpp
@@ -82,6 +80,9 @@ double brad(int a,int b,int id, DataFrame lambda, DataFrame dataset){
 // run after the compilation.
 //
 
+//setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/")
+//  library(Rcpp)
+//  sourceCpp("rcpp_brad.cpp")
 /*** R
 timesTwo(42)
 */

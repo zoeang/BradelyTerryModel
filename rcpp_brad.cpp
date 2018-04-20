@@ -50,10 +50,53 @@ DataFrame ex_fun2(DataFrame x, IntegerVector ids) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //this is brad
 //calling r function in rcpp
-NumericVector callFunction(NumericVector x, Function f) {
-  NumericVector res = f(x);
+//reference: http://gallery.rcpp.org/articles/r-function-from-c++/
+DataFrame callFunction(int a, int b, NumericVector id, DataFrame lambda, DataFrame dataset, Function f) {
+  NumericVector res = f(a,b,id,lambda,dataset);
   return res;
 }
+callFunction(a,b,id,lambda,dataset, bradleyterry.easy)
+//----------------------------------------------------------------------------
+//Example: "Using R Functions" https://teuder.gitbooks.io/introduction-to-rcpp/content/en/22_R_function.html
+//---------------------------------------------------------------------------
+//What?
+// [[Rcpp::export]]
+DataFrame rcpp_sapply(DataFrame input, Function bradleyterry.easy) {
+  // Applies the Function bradleyterry.easy to each element of the DataFrame input and returns the result as DataFrame
+  
+  // Number of elements in the List input
+  R_xlen_t n = input.length();
+  
+  // Creating a List for output
+  List out(n);
+  
+  // Applying f() to each element of "input" and store it to "out".
+  // The type of the return value of f() is unknown, but it can be assigned to the List element.
+  for(R_xlen_t i = 0; i < n; ++i) {
+    out[i] = bradleyterry.easy(input[i]);
+  }
+  return out;
+}
+//-----------------------------------------------------------------------------
+//Example from https://stackoverflow.com/questions/38016851/call-r-functions-in-rcpp?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+//-----------------------------------------------------------------------------
+// [[Rcpp::export]]
+DataFrame btmult(const Rcpp::NumericVector& x){
+  
+  // Obtain environment containing function
+  Rcpp::Environment base("package:bradleyterry"); 
+  
+  // Make function callable from C++
+  Rcpp::Function bradleyterry_r = base["bradleyterry.easy"];
+  // Call the function and receive its list output
+  Rcpp::DataFrame res = bradleyterry_r(Rcpp::_[(a,b,id,lambda,dataset)] = x); // arguments?
+  
+  // Return test object in list structure
+  DataFrame output= cbind(id,sapply(id, bradleyterry_r(x) bradleyterry_r(a,b,id=x, lambda, dataset)));
+  colnames(output)=c('DocId','Lambda');
+  return output;
+}
+//End example; this is hard------------------------------------------------------------------
 //////
 double brad(int a,int b,int id, DataFrame lambda, DataFrame dataset){
   //DataFrame subsetdata = ex_fun1(dataset,id);

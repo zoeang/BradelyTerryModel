@@ -115,7 +115,6 @@ lambdatrans<-function(docid,lambda){
   lambdalist<-as.list(lambdalist)
   for (i in docid){  
     lambdalist[[i]]<-lambda[lambda$DocId %in% i,]
-    browser()
   }
   return(lambdalist)
 }

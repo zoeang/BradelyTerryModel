@@ -21,7 +21,53 @@ lam<-runif(10)
 lambda1<-as.data.frame(cbind(id,.5))
 colnames(lambda1)<-c('DocId', 'Lambda')
 
+#Data Generation===============================================================
+HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
+HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 
+datatransform<-function(HIT){
+  vec<-rep(1:2, 1500)
+  HIT<-cbind(HIT,vec)
+  HIT<-as.data.frame((HIT))
+  colnames(HIT)<-c("comparison_id" ,"document_id", "result","num")
+  DocIDi<-NULL
+  DocIDj<-NULL
+  Choose<-NULL
+  for (i in 1:nrow(HIT)){
+    if (HIT$num[i]==2){
+      DocIDj<-c(DocIDj,HIT$document_id[i])
+    }
+    else{
+      DocIDi<-c(DocIDi,HIT$document_id[i])
+      Choose<-c(Choose,HIT$result[i])
+    }
+  }
+  newHIT<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
+  DocIDi<-NULL
+  DocIDj<-NULL
+  Choose<-NULL
+  for (i in 1:nrow(HIT)){
+    if (HIT$num[i]==1){
+      DocIDj<-c(DocIDj,HIT$document_id[i])
+    }
+    else{
+      DocIDi<-c(DocIDi,HIT$document_id[i])
+      Choose<-c(Choose,HIT$result[i])
+    }
+  }
+  newHIT2<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
+  metaHIT<-rbind(newHIT,newHIT2)
+  return(metaHIT)
+}
+
+HIT2<-datatransform(HIT)
+
+
+DocId<-unique(HIT$document_id)
+DocId<-sort(DocId, decreasing = F)
+Lambda<-runif(50)
+lambda<-cbind(DocId,Lambda)
+lambda<-as.data.frame(lambda)
 
 
 data.generation<-function(lambda,n){ #n size dataset
@@ -46,6 +92,7 @@ data.generation<-function(lambda,n){ #n size dataset
 dataset<-data.generation(lambda,500)
 
 #==============================================================================
+#Pre-format data prior to rcpp coding
 #==============================================================================
 
 datatrans<-function(docid,dataset){
@@ -62,7 +109,7 @@ datatrans<-function(docid,dataset){
 test1<-datatrans(DocId,HIT2)
 test1[[4990]]
 
-datatrans<-function(docid,lambda){
+lambdatrans<-function(docid,lambda){
   lambdalist<-NULL
   lambdalist<-as.list(lambdalist)
   for (i in docid){  
@@ -95,7 +142,7 @@ bradleyterry<-function(a,b,id,lambda,dataset){
   output<-(a-1+sum(subsetdata$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }
-
+ #This function uses the pre-formatted 'lambda' and 'dataset': use for rcpp 
 bradleyterry.easy<-function(a,b,id,lambda,dataset){
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
@@ -148,53 +195,7 @@ iterative.bt.tol<-function(a,b,id,lambda,dataset,iterations){
 #================================================================================
 #================================================================================
 
-#### DATA JACOB GAVE US
-HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
-HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 
-datatransform<-function(HIT){
-  vec<-rep(1:2, 1500)
-  HIT<-cbind(HIT,vec)
-  HIT<-as.data.frame((HIT))
-  colnames(HIT)<-c("comparison_id" ,"document_id", "result","num")
-  DocIDi<-NULL
-  DocIDj<-NULL
-  Choose<-NULL
-  for (i in 1:nrow(HIT)){
-    if (HIT$num[i]==2){
-      DocIDj<-c(DocIDj,HIT$document_id[i])
-    }
-    else{
-      DocIDi<-c(DocIDi,HIT$document_id[i])
-      Choose<-c(Choose,HIT$result[i])
-    }
-  }
-  newHIT<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
-  DocIDi<-NULL
-  DocIDj<-NULL
-  Choose<-NULL
-  for (i in 1:nrow(HIT)){
-    if (HIT$num[i]==1){
-      DocIDj<-c(DocIDj,HIT$document_id[i])
-    }
-    else{
-      DocIDi<-c(DocIDi,HIT$document_id[i])
-      Choose<-c(Choose,HIT$result[i])
-    }
-  }
-  newHIT2<-as.data.frame(cbind(DocIDi,DocIDj,Choose))
-  metaHIT<-rbind(newHIT,newHIT2)
-  return(metaHIT)
-}
-
-HIT2<-datatransform(HIT)
-
-
-DocId<-unique(HIT$document_id)
-DocId<-sort(DocId, decreasing = F)
-Lambda<-runif(50)
-lambda<-cbind(DocId,Lambda)
-lambda<-as.data.frame(lambda)
 
 recovered<-iterative.bt.tol(1,1,DocId,lambda,HIT2,3500)
 

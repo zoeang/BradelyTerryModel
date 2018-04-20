@@ -22,6 +22,10 @@ lambda1<-as.data.frame(cbind(id,.5))
 colnames(lambda1)<-c('DocId', 'Lambda')
 
 #Data Generation===============================================================
+dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+HIT<-dat[,3:5]
+
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
 
@@ -94,36 +98,31 @@ dataset<-data.generation(lambda,500)
 #==============================================================================
 #Pre-format data prior to rcpp coding
 #==============================================================================
-
+head(HIT2)
 datatrans<-function(docid,dataset){
   outputlist<-NULL
   outputlist<-as.list(outputlist)
   for (i in docid){  
-  subsetdata1<-dataset[dataset$DocIDi %in% i,]
-  #for(i in 1:length(docid)){
-    outputlist[[i]]<-subsetdata1
-  #}
+    outputlist[[i]]<-dataset[dataset$DocIDi %in% i,]
   }
   return(outputlist)
 }
 test1<-datatrans(DocId,HIT2)
-test1[[4990]]
+test1[[5000]]
 
 lambdatrans<-function(docid,lambda){
   lambdalist<-NULL
   lambdalist<-as.list(lambdalist)
   for (i in docid){  
-    subsetdata2<-lambda[lambda$DocId %in% i,]
-    #for(i in 1:length(docid)){
-    lambdalist[[i]]<-subsetdata2
-    #}
+    lambdalist[[i]]<-lambda[lambda$DocId %in% i,]
+    browser()
   }
   return(lambdalist)
 }
-
-test2<-datatrans(DocId,lambda)
-test2[[4991]]$DocId
-
+head(lambda)
+test2<-lambdatrans(DocId,lambda)
+test2[[4990]]
+lambdalist[[4990]]
 #### FUNCTION 1 #######
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
@@ -230,8 +229,6 @@ comparison<-as.data.frame(comparison)
 colnames(comparison)<-c("DocId", "Lambda")
 
 dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
-
 dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 HIT<-dat[,3:5]
 
-sort(unique(dat2$document_id), decreasing = F)

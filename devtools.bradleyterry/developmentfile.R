@@ -125,11 +125,7 @@ lambdalist[[4990]]
 #### FUNCTION 1 #######
 
 #This function uses the pre-formatted 'lambda' and 'dataset': use for rcpp 
-
-bradleyterry.easy(1,1,5015,test2,test1)
-bradleyterry(1,1,5015,lambda,HIT2)
-
-bradleyterry.easy<-function(a,b,id,lambda,dataset){
+bradleyterryeasy<-function(a,b,id,lambda,dataset){
   sumvec<-NULL #create null vectors to store our sum elements
   lambdavec<-NULL #create null vector to extract the lambda elements we want
   for(i in 1:nrow(dataset[[id]])){ #the purpose of thsi loop is to extract lambda j values for use in the next loop
@@ -145,7 +141,7 @@ bradleyterry.easy<-function(a,b,id,lambda,dataset){
   output<-(a-1+sum(dataset[[id]]$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }
-
+#this is the old slower function
 bradleyterry<-function(a,b,id,lambda,dataset){
   subsetdata<-dataset[dataset$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
   newlambda<-lambda[lambda$DocId %in% id,]#this extracts the specific DocID and lambda value we want to upgrade for the purpose of the equation 
@@ -167,8 +163,18 @@ bradleyterry<-function(a,b,id,lambda,dataset){
 
 #### FUNCTION 2 #######
 
+#this is the old function
 bradleyterry.multid<-function(a, b, id, lambda, dataset){
   output<-sapply(id, function(x) bradleyterry(a,b,id=x, lambda, dataset))
+  output<-cbind(id,output)
+  output<-as.data.frame(output)
+  colnames(output)<-c('DocId','Lambda')
+  return(output)
+}
+
+#this was a dummy function for the one with subset data
+bradleyterry.multide<-function(a, b, id, lambda, dataset){
+  output<-sapply(id, function(x) bradleyterryeasy(a,b,id=x, lambda, dataset))
   output<-cbind(id,output)
   output<-as.data.frame(output)
   colnames(output)<-c('DocId','Lambda')
@@ -197,12 +203,8 @@ iterative.bt.tol<-function(a,b,id,lambda,dataset,iterations){
   }
   return(lambda1) #returns the output as the number of iterations determined by the user.
 }
-
 #================================================================================
 #================================================================================
-
-
-
 recovered<-iterative.bt.tol(1,1,DocId,lambda,HIT2,3500)
 
 recovered<-recovered0
@@ -234,8 +236,3 @@ comparison<-cbind(apiTest$id,post.lambda)
 
 comparison<-as.data.frame(comparison)
 colnames(comparison)<-c("DocId", "Lambda")
-
-dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
-dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
-HIT<-dat[,3:5]
-

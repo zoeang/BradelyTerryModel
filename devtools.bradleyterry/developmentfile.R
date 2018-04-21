@@ -178,6 +178,7 @@ bradleyterry.multide<-function(a, b, id, lambda, dataset){
   output<-cbind(id,output)
   output<-as.data.frame(output)
   colnames(output)<-c('DocId','Lambda')
+  newout<-lambdatrans(id,output)
   return(output)
 }
 

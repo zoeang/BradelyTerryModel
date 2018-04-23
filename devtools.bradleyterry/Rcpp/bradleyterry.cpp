@@ -3,25 +3,19 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-double bradleyterry(int a; int b, vec id; DataFrame lambda; DataFrame dataset ){
-  DataFrame subsetdata=dataset[dataset['DocIDi'] %in% id,];
-  DataFrame newlambda=lambda[lambda['DocId'] %in% id,];
-  NumericVector sumvec=;
-  NumericVector lambdavec=; 
+double bradleyterryeasy(int a, int b, int id, List lambda, List datset ){
+  NumericVector sumvec; // create empty vectors to store our sum elements
+  NumericVector lambdavec; //create empty vector to extract the lambda elements we want
 
-  for(int i=0; i<subsetdata.nrow(); i++){
-    DataFrame lambdajsubset= lambda[lambda['DocId'] %in% subsetdata['DocIDj'][i],];   /*** how to subset?    
-    NumericVector lambdavec= c(lambdavec,lambdajsubset['Lambda']);
+  for(int i=0; i<datset[[id]].size; ++i){ //i needs to be length of test1[[4990]][,2]
+    //NumericVector lambdaj=datset[[id]][,2] //vector of DocIDj for corresponding DocIDi comparison
+    double sumunit=(1/(lambda[[id]][,2]+lambda[[datset[[id]][,2][i]]][,2]));// 1/ lambdaI+ lambdaJ
+    NumericVector sumvec= c(sumvec, sumunit); //vector of 1/lambdaI+lambdaJ for each comparison of DocIDI to DocIDJ
     };
-
-
-  for (int i=0; i<nrow(subsetdata); i++){
-   double sumunit = (1/(newlambda['Lambda']+lambdavec[i])); 
-  NumericVector sumvec = as.vector(c(sumvec,sumunit)) ;
-  }
-  
   NumericVector summationterm = sum(sumvec) ;
- */
-  DataFrame output = (a-1+sum(subsetdata['Choose'])/(b+summationterm);
+  NumericVector output = (a-1+sum(dat[[id]][,3])/(b+summationterm);
   return(output)
   }
+
+  
+  

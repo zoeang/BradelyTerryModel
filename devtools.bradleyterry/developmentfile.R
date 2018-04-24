@@ -120,8 +120,8 @@ lambdatrans<-function(docid,lambda){
 }
 head(lambda)
 test2<-lambdatrans(DocId,lambda)
-test2[[4990]]
-lambdalist[[4990]]
+test2[[4990]][,2]
+class(test2)
 #### FUNCTION 1 #######
 
 #This function uses the pre-formatted 'lambda' and 'dataset': use for rcpp 

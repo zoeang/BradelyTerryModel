@@ -121,7 +121,7 @@ lambdatrans<-function(docid,lambda){
 head(lambda)
 test2<-lambdatrans(DocId,lambda)
 test2[[4990]][,2]
-class(test2)
+ class(test2)
 #### FUNCTION 1 #######
 
 #This function uses the pre-formatted 'lambda' and 'dataset': use for rcpp 
@@ -219,6 +219,81 @@ cor(log(recovered$Lambda),comparison$Lambda)
 plot(recovered$Lambda,apiTest$rating)
 plot(recovered$Lambda,comparison$Lambda)
 plot(log(recovered$Lambda),apiTest$rating)
+
+
+## Re arranging data
+
+# this is the lambda I'm updating right now
+x<-5011
+
+
+rownames(lambda)<-lambda$DocId
+
+lambdax<-lambda[paste0(x),"Lambda"]
+lambdax
+thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"]
+thisLambda<-lambda[paste0(HIT2[which(HIT2$DocIDi==x),"DocIDj"]),]
+
+newData<-cbind(thisChoos, thisLambda)
+newData
+
+
+updateLambdax<-function(newData, lambdax, a=1, b=1){
+  numerator<-(a-1)+sum(newData$thisChoos)
+  denominator<-(b+sum(1/(lambdax+newData$Lambda)))
+  return(numerator/denominator)
+}
+updateLambdax(newData=newData, lambdax=lambdax)
+
+
+dataReorganizer<-function(x){
+lambdax<-lambda[paste0(x),"Lambda"]
+thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"]
+thisLambda<-lambda[paste0(HIT2[which(HIT2$DocIDi==x),"DocIDj"]),]
+
+newData<-cbind(thisChoos, thisLambda)
+newData
+}
+
+dataReorganizer(5011)
+
+
+library(plyr)
+#toPassToC<-
+toPassToC<-  lapply(unique(lambda$DocId), dataReorganizer)
+names(toPassToC)<-unique(lambda$DocId)
+
+updateLambdax2<-function(allData, lambda, thisName, a=1, b=1){
+  lambdax<-lambda[thisName, "Lambda"]
+  newData<-allData[[thisName]]
+   
+  ### R will nwo call some c function right here
+  ## Wil datke in lambax and newData and b and a and return numerator/denomintor
+  
+  numerator<-(a-1)+sum(newData$thisChoos) ## this works in c
+  denominator<-(b+sum(1/(lambdax+newData$Lambda))) ## this works in c
+  return(numerator/denominator) # do the division here in c 2
+}
+updateLambdax2(allData=toPassToC, lambda=lambda, thisName="5012")
+
+
+## Update all Lambdas
+sapply(paste0(unique(lambda$DocId)), FUN=updateLambdax2, lambda=lambda, allData= toPassToC )
+
+## Update across time and check stoping rules
+## Make r code
+
+
+dataReorganizer()
+
+
+
+updateLambdax(newData=newData, lambdax=lambdax)
+
+
+b=1
+sum(1/(lambdax+newData$Lambda))
+
 plot(log(recovered$Lambda),comparison$Lambda)
 
 

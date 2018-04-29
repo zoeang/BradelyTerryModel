@@ -24,6 +24,9 @@ colnames(lambda1)<-c('DocId', 'Lambda')
 #Data Generation===============================================================
 dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+dat<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+
+
 HIT<-dat[,3:5]
 
 HIT<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/exampleHITs.csv", header=T)
@@ -224,12 +227,12 @@ plot(log(recovered$Lambda),apiTest$rating)
 ## Re arranging data
 
 # this is the lambda I'm updating right now
-x<-5011
+x<-5011 
 
 
-rownames(lambda)<-lambda$DocId
+rownames(lambda)<-lambda$DocId 
 
-lambdax<-lambda[paste0(x),"Lambda"]
+lambdax<-lambda[paste0(x),"Lambda"] 
 lambdax
 thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"]
 thisLambda<-lambda[paste0(HIT2[which(HIT2$DocIDi==x),"DocIDj"]),]

@@ -34,8 +34,7 @@ HIT<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/exampleHITs.csv"
 
 datatransform<-function(HIT){
   vec<-rep(1:2, 1500)
-  HIT<-cbind(HIT,vec)
-  HIT<-as.data.frame((HIT))
+  HIT<-as.data.frame(cbind(HIT,vec))
   colnames(HIT)<-c("comparison_id" ,"document_id", "result","num")
   DocIDi<-NULL
   DocIDj<-NULL
@@ -233,15 +232,14 @@ plot(log(recovered$Lambda),apiTest$rating)
 x<-5011 
 
 
-<<<<<<< HEAD
 rownames(lambda)<-lambda$DocId 
 
 lambdax<-lambda[paste0(x),"Lambda"] 
-=======
+
 rownames(lambda)<-lambda$DocId #rename each row the the DocID; the row names are strings/ characters 
 
 lambdax<-lambda[paste0(x),"Lambda"] #get the lambda value of x=5011
->>>>>>> 7f087824dce4e62db4a6ab223be886c1710b623b
+#same thing as ^ doc.x.lambda<-lambda[paste0(x),"Lambda"] # the prior lambda value of doc x
 lambdax
 thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"] #make a vector of "choose" of the DocIDis compared to Doc 5011
 thisLambda<-lambda[paste0(HIT2[which(HIT2$DocIDi==x),"DocIDj"]),] #make a df of DocIds, lambda from HIT2; similar to lambdax
@@ -253,7 +251,7 @@ dataReorganizer<-function(x){ #this is a function that does line 235-241 for a s
   lambdax<-lambda[paste0(x),"Lambda"]
   thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"]
   thisLambda<-lambda[paste0(HIT2[which(HIT2$DocIDi==x),"DocIDj"]),]
-  
+  #
   newData<-cbind(thisChoos, thisLambda)
   newData
 }

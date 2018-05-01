@@ -62,3 +62,11 @@ docXprior<-lambda[paste0(x),"Lambda"]# the prior lambda value of doc x
 
 ###See posteriorlambda.cpp
 
+###See postLambdaAllDocs.cpp
+names(postLambdaAllDocs)<-unique(lambda$DocId)
+
+postLambdaX<-function(listAllData, lambda, docString, a=1, b=1){
+  docXprior<-lambda[docString, 'Lambda']
+  newData<-listAllData[[docString]]
+  #call rcpp function 'posteriorlambda'
+}

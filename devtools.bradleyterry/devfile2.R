@@ -1,9 +1,14 @@
+rm(list=ls())
+
+
+
+
 #read in data
 dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 dat<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 HIT<-dat[,3:5]
-head(HIT, 10)
+
 #data transformation; allows us to calculate posterior lambdas for DocIs and DocJs; this only needs to be run once, so I'm not rewriting it
 datatransform<-function(HIT){
   vec<-rep(1:2, 1500)
@@ -40,6 +45,14 @@ datatransform<-function(HIT){
 }
 HIT2<-datatransform(HIT)
 
+
+
+
+########################## STOP HERE
+
+
+
+
 #create a dataframe of lambdas; the lambdas should converge better if they are not all the same value according to Jacob
 DocId<-sort(unique(HIT$document_id), decreasing=F)
 lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
@@ -48,6 +61,9 @@ lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random
 #document won (1) or lost (0); the second column is the document to which the dataframe document
 #was compared; and the third column is the prior probability that the datafram document "wins"
 
+
+
+
 #VERIFY: the function will search in the environment for 'lambda' and 'HIT2'
 doc.x.dataframe<-function(x){#x is the document ID for which the dataframe will be made
   x.choose<-HIT2[which(HIT2$DocIDi==x),"Choose"] #a vector indicating if doc x was chosen 
@@ -55,10 +71,13 @@ doc.x.dataframe<-function(x){#x is the document ID for which the dataframe will 
   newData<-cbind(x.choose, thisLambda)
 }
 
+
 #calculate the prior lambda for document x; this will be an argument in the Rcpp function to calculate the posterior lambda
 #define x, the document of interest
 rownames(lambda)<-lambda$DocId #allows the row to be called using x in the next line
 docXprior<-lambda[paste0(x),"Lambda"]# the prior lambda value of doc x
+
+
 
 ###See posteriorlambda.cpp
 
@@ -70,3 +89,31 @@ postLambdaX<-function(listAllData, lambda, docString, a=1, b=1){
   newData<-listAllData[[docString]]
   #call rcpp function 'posteriorlambda'
 }
+
+######################################### End hold
+
+DocId<-sort(unique(HIT$document_id), decreasing=F)
+HIT2<-datatransform(HIT)
+lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
+colnames(lambda)<-c("DocIDj", "Lambda")
+
+Rcpp::sourceCpp("posteriorlambda.cpp")
+
+#rely on line 7 to 46 and 100; nothing else should be found in the environment
+#make this into a function; out is lambda; arguments are DocId, HIT2, lambda
+allUpdatedLambda<-function(hits, lambdas, DocIds){
+HIT3<-merge(hits, lambdas, by="DocIDj") #this is an r function
+# below is a c++ function that calls the c++ function posteriorlambda
+for(i in 1:length(DocIds)){
+  x<-DocIds[i]
+  newData<-HIT3[which(Hits$DocIDi==x), c("Choose", "Lambda", "DocIDj")]
+  lambdas[lambdas$DocIDj==DocIds[i],2]<-posteriorlambda(newData,lambdas[lambdas$DocIDj==DocId[i],2], a=1, b=1)
+}
+return(lambdas)
+}
+
+HIT3=merge(HIT2, lambda, by="DocIDj")
+allUpdatedLambda(hits=HIT2, lambdas=lambda, DocIds=DocId)
+
+#everything else should be in r
+#use iterative.bt.tol

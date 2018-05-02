@@ -274,8 +274,8 @@ toPassToC<-  lapply(unique(lambda$DocId), dataReorganizer)#makes a list of DFs w
 names(toPassToC)<-unique(lambda$DocId)
 
 #this function will b in R but call on a C function; see line 253
-updateLambdax2<-function(allData, lambda, thisName, a=1, b=1){
-  lambdax<-lambda[thisName, "Lambda"]-
+updateLambdax2<-function(allData, lambda, thisName, a=1, b=1){ #allData is an rcpp function; thisName is a string of the DocID
+  lambdax<-lambda[thisName, "Lambda"]
   newData<-allData[[thisName]]
    
   ### R will nwo call some c function right here
@@ -289,8 +289,8 @@ updateLambdax2(allData=toPassToC, lambda=lambda, thisName="5012")
 
 #in rcpp
 ## Update all Lambdas
-sapply(paste0(unique(lambda$DocId)), FUN=updateLambdax2, lambda=lambda, allData= toPassToC )
-
+ob<-sapply(paste0(unique(lambda$DocId)), FUN=updateLambdax2, lambda=lambda, allData= toPassToC )
+class(ob)
 ## Update across time and check stoping rules
 ## Make r code
 

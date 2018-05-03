@@ -19,7 +19,8 @@ DataFrame lambdaLoop(DataFrame hits, DataFrame lambdas, NumericVector DocIds, Da
   int x=DocIds[i];
   DataFrame newData= Hit3[which(hits['DocIDi']==x), c("Choose", "Lambda", "DocIDj")];
   LogicalVector lambdaDocJ= lambdas['DocIDj'];
-  Function postLamb("porteriorlambda");
+  Function postLamb("posteriorlambda");
   DataFrame lambdas[lambdaDocJ==DocIds[i],1]=postLamb(newData,lambdas[lambdaDocJ==DocID[i],1], a=1, b=1 );
   }
 }
+

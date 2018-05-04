@@ -97,12 +97,13 @@ DocId<-sort(unique(HIT$document_id), decreasing=F)
 HIT2<-datatransform(HIT)
 lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
 colnames(lambda)<-c("DocIDj", "Lambda")
-
+HIT3<- merge(HIT2, lambda, by="DocIDj")
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 Rcpp::sourceCpp("posteriorlambda.cpp")
 
 Rcpp::sourceCpp("subsetLambdasDF.cpp")
-Rcpp::sourceCpp("lambdaLoop.cpp")
+Rcpp::sourceCpp("lambdaLoop2.cpp")
+lambdaLoop2(hits=HIT2,lambdas = lambda,DocIds = DocId,Hit3 = HIT3,extractLambdasDF = HIT2 )
 subsetlambdas(lambdas=lambda, DocIds=DocId)
 #rely on line 7 to 46 and 100; nothing else should be found in the environment
 #make this into a function; out is lambda; arguments are DocId, HIT2, lambda
@@ -116,7 +117,8 @@ for(i in 1:length(DocIds)){
 }
 return(lambdas)
 }
-
+head(HIT2)
+colnames(lambda)<-c("DocIDj", "V2")
 HIT3=merge(HIT2, lambda, by="DocIDj")
 allUpdatedLambda(hits=HIT2, lambdas=lambda, DocIds=DocId)
 

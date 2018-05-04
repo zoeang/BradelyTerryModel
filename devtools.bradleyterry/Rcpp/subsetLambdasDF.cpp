@@ -3,10 +3,10 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-DataFrame subsetlambdas(DataFrame lambdas, IntegerVector DocIds) {
-  NumericVector lambdavals = lambdas["V2"]; // get the IDs in the dataframe
-  NumericVector DocJs = lambdas["DocId"]; // get the other vector(s) in x
-  IntegerVector idx; // An integer vector to store the rows to keep
+NumericVector subsetlambdas(DataFrame lambdas, IntegerVector DocIds) {
+  NumericVector lambdavals = lambdas["Lambda"]; // get the IDs in the dataframe
+  NumericVector DocJs = lambdas["DocIDj"]; // get the other vector(s) in x
+  NumericVector idx; // An integer vector to store the rows to keep
   int n = lambdavals.size(), m = DocIds.size(); // Just object size variables
   for ( int i = 0; i < n; ++i ) { // for every row in the dataframe
     for ( int j = 0; j < m; ++j ) { // for every id in ids
@@ -17,5 +17,5 @@ DataFrame subsetlambdas(DataFrame lambdas, IntegerVector DocIds) {
   }
   // create a new dataframe out of each column of x,
   // subsetting each vector by idx
-  return DataFrame::create(_["DocJs"] = DocJs[idx], _["V2"] = lambdavals[idx]);
+  return idx;
 }

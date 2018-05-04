@@ -56,7 +56,8 @@ HIT2<-datatransform(HIT)
 #create a dataframe of lambdas; the lambdas should converge better if they are not all the same value according to Jacob
 DocId<-sort(unique(HIT$document_id), decreasing=F)
 lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
-
+rownames(lambda)<-lambda$DocId #allows the row to be called using x in the next line
+docXprior<-lambda[paste0(x),"Lambda"]# the prior lambda value of doc x
 #This function will create a dataframe for one document, where the first column indicates if the
 #document won (1) or lost (0); the second column is the document to which the dataframe document
 #was compared; and the third column is the prior probability that the datafram document "wins"
@@ -97,8 +98,12 @@ HIT2<-datatransform(HIT)
 lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
 colnames(lambda)<-c("DocIDj", "Lambda")
 
+setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 Rcpp::sourceCpp("posteriorlambda.cpp")
 
+Rcpp::sourceCpp("subsetLambdasDF.cpp")
+Rcpp::sourceCpp("lambdaLoop.cpp")
+subsetlambdas(lambdas=lambda, DocIds=DocId)
 #rely on line 7 to 46 and 100; nothing else should be found in the environment
 #make this into a function; out is lambda; arguments are DocId, HIT2, lambda
 allUpdatedLambda<-function(hits, lambdas, DocIds){
@@ -107,7 +112,7 @@ HIT3<-merge(hits, lambdas, by="DocIDj") #this is an r function
 for(i in 1:length(DocIds)){
   x<-DocIds[i]
   newData<-HIT3[which(Hits$DocIDi==x), c("Choose", "Lambda", "DocIDj")]
-  lambdas[lambdas$DocIDj==DocIds[i],2]<-posteriorlambda(newData,lambdas[lambdas$DocIDj==DocId[i],2], a=1, b=1)
+  lambdas[lambdas$DocIDj==DocIds[i],2]<-posteriorlambda(newData,lambdas[lambdas$DocIDj==DocIds[i],2], a=1, b=1)
 }
 return(lambdas)
 }

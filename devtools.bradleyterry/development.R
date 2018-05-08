@@ -45,8 +45,9 @@ datatransform<-function(HIT){
 }
 HIT2<-datatransform(HIT)
 
-
-
+DocId<-sort(unique(HIT$document_id), decreasing=F)
+lambda<- as.data.frame(cbind(DocId, runif(50)))
+colnames(lambda)<-c("DocIDj", "Lambda")
 
 ########################## STOP HERE
 
@@ -100,27 +101,34 @@ colnames(lambda)<-c("DocIDj", "Lambda")
 HIT3<- merge(HIT2, lambda, by="DocIDj")
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 Rcpp::sourceCpp("posteriorlambda.cpp")
-
-Rcpp::sourceCpp("subsetLambdasDF.cpp")
+Rcpp::sourceCpp("getlambda.cpp")
+#Rcpp::sourceCpp("subsetLambdasDF.cpp")
 Rcpp::sourceCpp("lambdaLoop2.cpp")
-lambdaLoop2(hits=HIT2,lambdas = lambda,DocIds = DocId,Hit3 = HIT3,extractLambdasDF = HIT2 )
-subsetlambdas(lambdas=lambda, DocIds=DocId)
+
+getlambda(lambda, DocId)
+posteriorlambda(HIT3, lambda$Lambda[1], 1,1)
+lambdaLoop2(hits=HIT2,lambdas = lambda,DocIds = DocId,Hit3 = HIT3)
+#subsetlambdas(lambdas=lambda, DocIds=DocId)
 #rely on line 7 to 46 and 100; nothing else should be found in the environment
 #make this into a function; out is lambda; arguments are DocId, HIT2, lambda
 allUpdatedLambda<-function(hits, lambdas, DocIds){
-HIT3<-merge(hits, lambdas, by="DocIDj") #this is an r function
-# below is a c++ function that calls the c++ function posteriorlambda
-for(i in 1:length(DocIds)){
-  x<-DocIds[i]
-  newData<-HIT3[which(Hits$DocIDi==x), c("Choose", "Lambda", "DocIDj")] #nest an rcpp loop in an r loop?
-  lambdas[lambdas$DocIDj==DocIds[i],2]<-posteriorlambda(newData,lambdas[lambdas$DocIDj==DocIds[i],2], a=1, b=1)
-}
-return(lambdas)
+  HIT3<-merge(hits, lambdas, by="DocIDj") #this is an r function
+  # below is a c++ function that calls the c++ function posteriorlambda
+  for(i in 1:length(DocIds)){
+    x<-DocIds[i]
+    newData<-HIT3[which(Hits$DocIDi==x), c("Choose", "Lambda", "DocIDj")] #nest an rcpp loop in an r loop?
+    lambdas[lambdas$DocIDj==DocIds[i],2]<-posteriorlambda(newData,lambdas[lambdas$DocIDj==DocIds[i],2], a=1, b=1)
+  }
+  return(lambdas)
 }
 head(HIT2)
-colnames(lambda)<-c("DocIDj", "V2")
+head(HIT3)
+colnames(lambda)<-c("DocIDj", "Lambda")
 HIT3=merge(HIT2, lambda, by="DocIDj")
 allUpdatedLambda(hits=HIT2, lambdas=lambda, DocIds=DocId)
-
+lambda[lambda$DocIDj==DocId[1],]
+length(lambda["DocIDj"])
 #everything else should be in r
 #use iterative.bt.tol
+
+

@@ -3,7 +3,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-DataFrame lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocIds, DataFrame Hit3, DataFrame extractLambdasDF){
+DataFrame lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocIds, DataFrame Hit3){
   
   IntegerVector docHit= hits["DocIDi"];
   IntegerVector Choose = Hit3["Choose"];
@@ -11,25 +11,20 @@ DataFrame lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocIds, D
   IntegerVector DocIDj = Hit3["DocIDj"];
   Function wich("which");
   Function postLamb("posteriorlambda");
-  Function subset("subsetlambdas"); //should this be inside the function or as argument extractLambdasDF?
-  double extractLambda= subset(lambdas, DocIds);
-  Rcout << extractLambda;
+  Function subset("getlambda"); //should this be inside the function or as argument?
+  NumericVector extractLambda = subset(lambdas, DocIds);
   for( int i=0; i<DocIds.size(); ++i){
-  int x=DocIds[i];
-  LogicalVector matchedHits= docHit== x;
-  Rcout << 1;
-  NumericVector hitsIDs= wich(Named("x")=matchedHits);
-  Rcout << 2;
+  int x = DocIds[i];
+  LogicalVector matchedHits = docHit == x;
+  NumericVector hitsIDs = wich(Named("x")=matchedHits);
   DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs],
                                         Named("Lambda") = Lambda[hitsIDs],
                                         Named("DocIDj") = DocIDj[hitsIDs]);
-  IntegerVector lambdaDocJ= lambdas["DocIDj"];
-  Rcout << 3;
-  DataFrame extractLambdasDF=postLamb(Named("newData")=newData,Named("docXprior")=extractLambda, Named("a")=1, Named("b")=1);
-  Rcout << 4;
-  extractLambda=extractLambdasDF;
+  //double extractLambdasDF = postLamb(newData,extractLambda[i], 1, 1);//output is the updated lambda; where to save? back into extractLambda
+  Rcout <<4;
+  //extractLambda[i]=extractLambdasDF;
   }
-  return(1);
+  return("Le fin");
 }
 
 

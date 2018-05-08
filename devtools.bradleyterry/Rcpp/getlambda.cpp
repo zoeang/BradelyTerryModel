@@ -3,17 +3,16 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-double getlambda(DataFrame lambdas, IntegerVector DocIds){
-  
-  //for( int i=0; i<DocIds.size(); ++i){
-  double x=DocIds[0];//
-  NumericVector DocJs = lambdas["DocIDj"];//
-  LogicalVector lambdamatch=DocJs==DocIds[x];
-  Rcout << lambdamatch;
-  DataFrame lambdaRow=lambdas[lambdamatch==1];
-  Rcout << 2;
-  double prior=lambdaRow["Lambda"];
-  Rcout << 3;
-//}
-  return(prior);
+NumericVector getlambda(DataFrame lambdas, IntegerVector DocIds){
+  NumericVector DocJs = lambdas["DocIDj"];
+  NumericVector Lambda = lambdas["Lambda"];
+  int n = DocIds.size();
+  NumericVector result(n);
+  for( int i=0; i< n; ++i){
+    double x = DocIds[i];
+    LogicalVector lambdamatch = DocJs == x;
+    NumericVector tmp = Lambda[lambdamatch==1];
+    result[i] = tmp[0];
+  }
+  return result;
 }

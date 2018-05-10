@@ -64,8 +64,22 @@ final<- function(hits, lambdas, DocIds){
   return(HIT3)
 }
 
+final<- function(hits, lambdas, DocIds){
+  HIT3<-merge(HIT2, lambda, by="DocIDj") 
+  lambdavec<-lambda$Lambda
+  while(all(abs(lambdavec-lambda$Lambda)>1e-8)){ #change arguments of lambdas
+    #sapply?
+    outputlambdas<-lambdaLoop2(hits=HIT3,lambdas = HIT3$Lambda, DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
+    lambda$Lambda<-outputlambdas[-1]
+  }
+  return(lambda$Lambda)
+}
+
+final(HIT2, lambda, DocId)
 
 
+
+#======================================
 final2<- function(hits, lambdas, DocIds){
   HIT3<-merge(hits, lambdas, by="DocIDj") 
  for( i in 1:3){ #change arguments of lambdas
@@ -81,4 +95,4 @@ final2<- function(hits, lambdas, DocIds){
   return(lambdavec)
 
 }
-final2(HIT2, lambda, DocId)
+final(HIT2, lambda, DocId)

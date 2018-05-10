@@ -21,9 +21,12 @@ NumericVector lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocId
   NumericVector Lambda = Hit3["Lambda"];// subset by DocID
   IntegerVector DocIDj = Hit3["DocIDj"];
   Function wich("which");
+  Function conc("c");
   //Function postLamb("posteriorlambda"); //if calling from a different .cpp
   Function subset("getlambda"); 
-  NumericVector extractLambda = subset(lambdas, DocIds);
+  NumericVector extractLambda = subset(lambdas, DocIds);// [[Rcpp::export]]
+  double updatedLambda = 0;
+  NumericVector updatedLambdas = NumericVector::create(0);
   for( int i=0; i<(DocIds.size()-1); ++i){
   int x = DocIds[i];
   LogicalVector matchedHits = docHit == x;// match wanted DocID to all DocIds
@@ -31,12 +34,12 @@ NumericVector lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocId
   DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs-1],
                                         Named("Lambda") = Lambda[hitsIDs-1],
                                         Named("DocIDj") = DocIDj[hitsIDs-1]);
-  Rcout << posteriorlambda(newData,extractLambda[i], 1, 1);
-  //NumericVector updatedLambdas = posteriorlambda(newData,extractLambda[i], 1, 1);
- // Rcout <<updatedLambdas;
+  updatedLambda = posteriorlambda(newData,extractLambda[i], 1, 1);
+  updatedLambdas = as<NumericVector>(conc(updatedLambdas, updatedLambda));
+ // NumericVector updatedLambdas = NumericVector:: create(posteriorlambda(newData,extractLambda[i], 1, 1));
   }
-  //return updatedLambdas;
-  return 1;
+  //return 1;
+  return updatedLambdas;
 }
 
 

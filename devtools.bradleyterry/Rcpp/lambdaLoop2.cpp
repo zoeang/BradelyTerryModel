@@ -27,7 +27,7 @@ NumericVector lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocId
   NumericVector extractLambda = subset(lambdas, DocIds);// [[Rcpp::export]]
   double updatedLambda = 0;
   NumericVector updatedLambdas = NumericVector::create(0);
-  for( int i=0; i<(DocIds.size()-1); ++i){
+  for( int i=0; i<(DocIds.size()); ++i){
   int x = DocIds[i];
   LogicalVector matchedHits = docHit == x;// match wanted DocID to all DocIds
   NumericVector hitsIDs = as<NumericVector>(wich(Named("x")=matchedHits));//row index of matchedHits; check indices from R to rcpp

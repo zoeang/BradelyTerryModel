@@ -81,4 +81,4 @@ final<- function(hits, lambdas, DocIds, iterations){
 }
 final(HIT2, lambda, DocId, 1000)
 library(microbenchmark)
-microbenchmark(final(HIT2, lambda, DocId, 1000))
+microbenchmark(final(HIT2, lambda, DocId, 1000), times=10)

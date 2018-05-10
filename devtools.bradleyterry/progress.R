@@ -1,3 +1,10 @@
+###BEN!!!!!!!!!
+#read in the datafrom line 5 to 48
+#set your working directory to the Rcpp file so you can source the .cpp files
+#jacob said he wants the only inputs of the final functions to be hits, lambda, and DocId, but I think HIT2 is useful; we should do whatever
+#works best
+rm(list=ls())
+
 #Read in data
 dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
 dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
@@ -54,45 +61,24 @@ Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 #--------------------
 
-final<- function(hits, lambdas, DocIds){
-  HIT3<-merge(hits, lambdas, by="DocIDj") 
-  while(all(abs(hits$lambdas-lambdas$Lambda)<1e-2)){ #change arguments of lambdas
-  #sapply?
-  outputlambdas<-lambdaLoop2(hits=HIT3,lambdas = HIT3$Lambda, DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
-  lambdas$Lambda<-outputlambdas[-1]
-  }
-  return(HIT3)
-}
-
-final<- function(hits, lambdas, DocIds){
-  HIT3<-merge(HIT2, lambda, by="DocIDj") 
-  lambdavec<-lambda$Lambda
-  while(all(abs(lambdavec-lambda$Lambda)>1e-8)){ #change arguments of lambdas
-    #sapply?
-    outputlambdas<-lambdaLoop2(hits=HIT3,lambdas = HIT3$Lambda, DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
-    lambda$Lambda<-outputlambdas[-1]
-  }
-  return(lambda$Lambda)
-}
-
-final(HIT2, lambda, DocId)
-
-
-
 #======================================
-final2<- function(hits, lambdas, DocIds){
+final<- function(hits, lambdas, DocIds, iterations){
   HIT3<-merge(hits, lambdas, by="DocIDj") 
- for( i in 1:3){ #change arguments of lambdas
-    #sapply?
-    outputlambdas<-lambdaLoop2(hits=HIT3,lambdas = HIT3$Lambda, DocIds = DocId,Hit3 = HIT3, extractLambda=lambdas$Lambda)
-    lambdas$Lambda<-lambdavec<-outputlambdas[-1]
-    if (all(abs(lambdas$Lambda-lambdavec)<1e-2)){
-      break}
+ for( i in 1:iterations){ #change arguments of lambdas
+    lambda1<-lambdaLoop2(hits=HIT2, DocIds = DocId,Hit3 = HIT3, extractLambda=lambdas$Lambda)
+    lambda1<-lambda1[-1]
+    #lambdas$Lambda<-lambda1[-1]
+    
+    if (all(abs(lambda1-lambdas$Lambda)<1e-15)){
+      break
+      }
     else{
-      lambda<-lambdavec
+      lambdas$Lambda<-lambda1
     }
  }
-  return(lambdavec)
+  return(lambda1)
 
 }
-final(HIT2, lambda, DocId)
+final(HIT2, lambda, DocId, 1000)
+library(microbenchmark)
+microbenchmark(final(HIT2, lambda, DocId, 1000))

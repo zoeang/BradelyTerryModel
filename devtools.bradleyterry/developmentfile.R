@@ -198,7 +198,7 @@ iterative.bt<-function(a,b,id,lambda,dat, iterations){
 iterative.bt.tol<-function(a,b,id,lambda,dat,iterations){
   for (i in 1:iterations){   # from 1 to number of iteration, the loop repeats below function
     lambda1<-bradleyterry.multid(a,b,id,lambda,dat) #run the code above for one doc id, a number of times determined by user
-    if (all(abs(lambda1$Lambda-lambda$Lambda)<1e-8)){
+    if (all(abs(lambda1$Lambda-lambda$Lambda)<1e-2)){
       break}
       else{
         lambda<-lambda1
@@ -208,7 +208,7 @@ iterative.bt.tol<-function(a,b,id,lambda,dat,iterations){
 }
 #================================================================================
 #================================================================================
-recovered<-iterative.bt.tol(1,1,DocId,lambda,HIT2,3500)
+recovered<-iterative.bt.tol(1,1,DocId,lambda,HIT2,1000)
 
 recovered<-recovered0
 

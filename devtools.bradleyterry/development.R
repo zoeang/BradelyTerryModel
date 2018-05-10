@@ -107,7 +107,7 @@ Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 getlambda(lambda, DocId)
 posteriorlambda(HIT3, lambda$Lambda[1], 1,1)
-lambdaLoop2(hits=HIT2,lambdas = lambda,DocIds = DocId,Hit3 = HIT3)
+lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
 #subsetlambdas(lambdas=lambda, DocIds=DocId)
 #rely on line 7 to 46 and 100; nothing else should be found in the environment
 #make this into a function; out is lambda; arguments are DocId, HIT2, lambda
@@ -116,7 +116,7 @@ allUpdatedLambda<-function(hits, lambdas, DocIds){
   # below is a c++ function that calls the c++ function posteriorlambda
   for(i in 1:length(DocIds)){
     x<-DocIds[i]
-    newData<-HIT3[which(Hits$DocIDi==x), c("Choose", "Lambda", "DocIDj")] #nest an rcpp loop in an r loop?
+    newData<-HIT3[which(hits$DocIDi==x), c("Choose", "Lambda", "DocIDj")] #nest an rcpp loop in an r loop?
     lambdas[lambdas$DocIDj==DocIds[i],2]<-posteriorlambda(newData,lambdas[lambdas$DocIDj==DocIds[i],2], a=1, b=1)
   }
   return(lambdas)

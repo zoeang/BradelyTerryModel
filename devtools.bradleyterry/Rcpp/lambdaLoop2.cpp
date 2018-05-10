@@ -1,30 +1,41 @@
 #include<Rcpp.h>
 
+
 using namespace Rcpp;
 
+
 // [[Rcpp::export]]
-DataFrame lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocIds, DataFrame Hit3){
-  
-  IntegerVector docHit= hits["DocIDi"];
-  IntegerVector Choose = Hit3["Choose"];
-  NumericVector Lambda = Hit3["Lambda"];
+double posteriorlambda(DataFrame newData, double docXprior, int a=1, int b=1){
+  double numerator = (a-1) + sum(as<NumericVector>(newData["Choose"]));
+  double denominator = (b + sum(1 / (docXprior + as<NumericVector>(newData["Lambda"]))));
+  //  Rcout << numerator;
+  //  Rcout << denominator;
+  //  Rcout << numerator/denominator;
+  return numerator/denominator;
+}
+
+// [[Rcpp::export]]
+NumericVector lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocIds, DataFrame Hit3){
+  IntegerVector docHit= hits["DocIDi"]; //create vectors from the columns of the dataframe
+  IntegerVector Choose = Hit3["Choose"]; // these will later be used in the loop to 
+  NumericVector Lambda = Hit3["Lambda"];// subset by DocID
   IntegerVector DocIDj = Hit3["DocIDj"];
   Function wich("which");
-  Function postLamb("posteriorlambda");
-  Function subset("getlambda"); //should this be inside the function or as argument?
+  //Function postLamb("posteriorlambda"); //if calling from a different .cpp
+  Function subset("getlambda"); 
   NumericVector extractLambda = subset(lambdas, DocIds);
-  for( int i=0; i<DocIds.size(); ++i){
+  for( int i=0; i<(DocIds.size()-1); ++i){
   int x = DocIds[i];
-  LogicalVector matchedHits = docHit == x;
-  NumericVector hitsIDs = wich(Named("x")=matchedHits);
-  DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs],
-                                        Named("Lambda") = Lambda[hitsIDs],
-                                        Named("DocIDj") = DocIDj[hitsIDs]);
-  //double extractLambdasDF = postLamb(newData,extractLambda[i], 1, 1);//output is the updated lambda; where to save? back into extractLambda
-  Rcout <<4;
-  //extractLambda[i]=extractLambdasDF;
+  LogicalVector matchedHits = docHit == x;// match wanted DocID to all DocIds
+  NumericVector hitsIDs = as<NumericVector>(wich(Named("x")=matchedHits));//row index of matchedHits; check indices from R to rcpp
+  DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs-1],
+                                        Named("Lambda") = Lambda[hitsIDs-1],
+                                        Named("DocIDj") = DocIDj[hitsIDs-1]);
+  NumericVector updatedLambdas = posteriorlambda(newData,extractLambda[i], 1, 1);
+  Rcout <<updatedLambdas;
   }
-  return("Le fin");
+  //return updatedLambdas;
+  return 1;
 }
 
 

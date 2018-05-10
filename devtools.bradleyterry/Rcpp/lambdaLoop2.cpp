@@ -31,8 +31,9 @@ NumericVector lambdaLoop2(DataFrame hits, DataFrame lambdas, NumericVector DocId
   DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs-1],
                                         Named("Lambda") = Lambda[hitsIDs-1],
                                         Named("DocIDj") = DocIDj[hitsIDs-1]);
-  NumericVector updatedLambdas = posteriorlambda(newData,extractLambda[i], 1, 1);
-  Rcout <<updatedLambdas;
+  Rcout << posteriorlambda(newData,extractLambda[i], 1, 1);
+  //NumericVector updatedLambdas = posteriorlambda(newData,extractLambda[i], 1, 1);
+ // Rcout <<updatedLambdas;
   }
   //return updatedLambdas;
   return 1;

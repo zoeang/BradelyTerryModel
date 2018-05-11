@@ -69,7 +69,7 @@ final<- function(hits, lambdas, DocIds, iterations){
     lambda1<-lambdaLoop2(hits=HIT2, DocIds = DocId,Hit3 = HIT3, extractLambda=lambda1)
     
     lambda1<-lambda1[-1]
-    print(c(lambda1, "here"))
+    #print(c(lambda1, "here"))
     #lambdas$Lambda<-lambda1[-1]
     
     if (all(abs(lambda1-lambdas$Lambda)<1e-15)){
@@ -82,7 +82,7 @@ final<- function(hits, lambdas, DocIds, iterations){
   return(lambda1)
 
 }
-final(HIT2, lambda, DocId,5 )
+final(HIT2, lambda, DocId,200 )
 test1-test
 
 library(microbenchmark)

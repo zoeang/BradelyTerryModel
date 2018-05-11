@@ -63,10 +63,13 @@ Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 #======================================
 final<- function(hits, lambdas, DocIds, iterations){
-  HIT3<-merge(hits, lambdas, by="DocIDj") 
+  lambda1<-lambdas$Lambda
  for( i in 1:iterations){ #change arguments of lambdas
-    lambda1<-lambdaLoop2(hits=HIT2, DocIds = DocId,Hit3 = HIT3, extractLambda=lambdas$Lambda)
+   HIT3<-merge(hits, lambdas, by="DocIDj") 
+    lambda1<-lambdaLoop2(hits=HIT2, DocIds = DocId,Hit3 = HIT3, extractLambda=lambda1)
+    
     lambda1<-lambda1[-1]
+    print(c(lambda1, "here"))
     #lambdas$Lambda<-lambda1[-1]
     
     if (all(abs(lambda1-lambdas$Lambda)<1e-15)){
@@ -79,6 +82,23 @@ final<- function(hits, lambdas, DocIds, iterations){
   return(lambda1)
 
 }
-final(HIT2, lambda, DocId, 1000)
+final(HIT2, lambda, DocId,5 )
+test1-test
+
 library(microbenchmark)
 microbenchmark(final(HIT2, lambda, DocId, 1000), times=10)
+#-------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------
+apiTest<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/apiTest.csv")
+library(rstan)
+setwd('C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel')
+load("fitExperiment2.7")
+
+#We need to compare the output of our model to pst.lambda, the output of their stan model
+post.lambda = summary(fitExperiment2.7)$summary[paste0('a[',1:50,']'),'mean']
+comparison<-cbind(apiTest$id,post.lambda)
+
+comparison<-as.data.frame(comparison)
+colnames(comparison)<-c("DocId", "Lambda")
+plot(log(test1), comparison$Lambda)
+cor(log(test1), comparison$Lambda)

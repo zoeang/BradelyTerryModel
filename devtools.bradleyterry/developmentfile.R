@@ -211,7 +211,7 @@ iterative.bt.tol<-function(a,b,id,lambda,dat,iterations){
 }
 #================================================================================
 #================================================================================
-recovered<-iterative.bt.tol(1,1,DocId,lambda,HIT2,1000)
+recovered<-iterative.bt(1,1,DocId,lambda,HIT2,1000)
 
 recovered<-recovered0
 

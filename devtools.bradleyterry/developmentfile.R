@@ -68,12 +68,13 @@ datatransform<-function(HIT){
 
 HIT2<-datatransform(HIT)
 
-
+set.seed(42)
 DocId<-unique(HIT$document_id)
 DocId<-sort(DocId, decreasing = F)
 Lambda<-runif(50)
 lambda<-cbind(DocId,Lambda)
 lambda<-as.data.frame(lambda)
+lambda
 
 
 data.generation<-function(lambda,n){ #n size dataset
@@ -145,6 +146,7 @@ bradleyterryeasy<-function(a,b,id,lambda,dat){
 }
 #this is the old slower function
 bradleyterry<-function(a,b,id,lambda,dat){
+  browser()
   subsetdata<-dat[dat$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
   newlambda<-lambda[lambda$DocId %in% id,]#this extracts the specific DocID and lambda value we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
@@ -161,6 +163,8 @@ bradleyterry<-function(a,b,id,lambda,dat){
   output<-(a-1+sum(subsetdata$Choose))/(b+summationterm) #this is where we finish up the equation and plug in all of our respective parts
   return(output)
 }
+
+bradleyterry(a=1, b=1, id=4969, lambda=lambda, dat=HIT2)
 
 
 #### FUNCTION 2 #######

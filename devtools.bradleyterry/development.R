@@ -46,6 +46,7 @@ datatransform<-function(HIT){
 HIT2<-datatransform(HIT)
 
 DocId<-sort(unique(HIT$document_id), decreasing=F)
+set.seed(42)
 lambda<- as.data.frame(cbind(DocId, runif(50)))
 colnames(lambda)<-c("DocIDj", "Lambda")
 
@@ -96,9 +97,12 @@ postLambdaX<-function(listAllData, lambda, docString, a=1, b=1){
 
 DocId<-sort(unique(HIT$document_id), decreasing=F)
 HIT2<-datatransform(HIT)
+set.seed(42)
 lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
 colnames(lambda)<-c("DocIDj", "Lambda")
 HIT3<- merge(HIT2, lambda, by="DocIDj")
+
+
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 Rcpp::sourceCpp("posteriorlambda.cpp")
 Rcpp::sourceCpp("getlambda.cpp")
@@ -107,6 +111,8 @@ Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 getlambda(lambda, DocId)
 posteriorlambda(HIT3, lambda$Lambda[1], 1,1)
+lambda[1,]
+
 lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
 #subsetlambdas(lambdas=lambda, DocIds=DocId)
 #rely on line 7 to 46 and 100; nothing else should be found in the environment

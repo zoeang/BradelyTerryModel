@@ -145,7 +145,6 @@ bradleyterryeasy<-function(a,b,id,lambda,dat){
 }
 #this is the old slower function
 bradleyterry<-function(a,b,id,lambda,dat){
-  browser()
   subsetdata<-dat[dat$DocIDi %in% id,]#this subsets the dataset down to just the observations with the id that we are looking at
   newlambda<-lambda[lambda$DocId %in% id,]#this extracts the specific DocID and lambda value we want to upgrade for the purpose of the equation 
   sumvec<-NULL #create null vectors to store our sum elements
@@ -211,7 +210,7 @@ iterative.bt.tol<-function(a,b,id,lambda,dat,iterations){
 }
 #================================================================================
 #================================================================================
-recovered<-iterative.bt(1,1,DocId,lambda,HIT2,1000)
+recovered0<-iterative.bt(1,1,DocId,lambda,HIT2,10)
 
 recovered<-recovered0
 

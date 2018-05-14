@@ -91,8 +91,10 @@ Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 getlambda(lambda, DocId) #taking lambda for matching DocId
 
+HIT3<-subset(HIT3, HIT3$DocIDj=="4969") #this may help ? -LIM
 #this is same as "bradleyterry" in R.
 posteriorlambda(HIT3, lambda$Lambda[1], 1,1) #one updated lambda for id 4969
+bradleyterry(a=1,b=1,id=4969,lambda,HIT2)
 
 #this is same as "bradleyterry.multid" in R.
 lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)

@@ -6,7 +6,7 @@
 ## Re arranging data
 
 # this is the lambda I'm updating right now
-x<-5011 
+x<-5011  #if you want to change doc id (for instance, 4969), just change all 5011 to 4969.
 
 
 rownames(lambda)<-lambda$DocId 

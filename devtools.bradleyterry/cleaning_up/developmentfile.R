@@ -74,7 +74,6 @@ DocId<-sort(DocId, decreasing = F)
 Lambda<-runif(50)
 lambda<-cbind(DocId,Lambda)
 lambda<-as.data.frame(lambda)
-lambda
 
 
 data.generation<-function(lambda,n){ #n size dataset
@@ -165,8 +164,6 @@ bradleyterry<-function(a,b,id,lambda,dat){
 }
 bradleyterry(a=1,b=1,id=4969,lambda,HIT2)
 
-
-bradleyterry(a=1, b=1, id=4969, lambda=lambda, dat=HIT2)
 
 
 #### FUNCTION 2 #######

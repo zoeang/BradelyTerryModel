@@ -93,14 +93,10 @@ DocId<-sort(DocId, decreasing = F)
 Lambda<-runif(50)
 lambda<-cbind(DocId,Lambda)
 lambda<-as.data.frame(lambda)
-
-
-#DocId<-sort(unique(HIT$document_id), decreasing=F)
-#HIT2<-datatransform(HIT)
-#lambda2<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
 colnames(lambda)<-c("DocIDj", "Lambda")
-HIT3<- merge(HIT2, lambda, by="DocIDj")
 
+
+HIT2$Lambda <- lambda$Lambda[match(HIT2$DocIDj, lambda$DocId)]
 
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/Rcpp")
@@ -109,10 +105,6 @@ Rcpp::sourceCpp("posteriorlambda.cpp")
 Rcpp::sourceCpp("getlambda.cpp")
 #Rcpp::sourceCpp("subsetLambdasDF.cpp")
 Rcpp::sourceCpp("lambdaLoop2.cpp")
-getlambda(lambda, DocId) #taking lambda for matching DocId
-
-HIT3<-subset(HIT3, HIT3$DocIDj=="4969") #dont use HIT3.
-#this is same as "bradleyterry" in R.
 
 #bring "newData" from jacob_R_code.
 newData
@@ -120,16 +112,17 @@ newnew<-as.data.frame(cbind(newData$thisChoos,newData$DocId,newData$Lambda))
 colnames(newnew)<-c("Choose","DocId","Lambda") #rename it for postlambda function.
 
 posteriorlambda(newnew, lambda$Lambda[1], 1,1) #one updated lambda for id 4969
+#You can see this rcpp function's outcome is same as the outocme of bradleyterry in R.
 
-
-colnames(lambda)<-c("DocId","Lambda")
-bradleyterry(a=1,b=1,id=4969,lambda,HIT2)
+lambda2<-lambda
+colnames(lambda2)<-c("DocId","Lambda") #same as lambda, but because of the name of a column, I need to do this.
+bradleyterry(a=1,b=1,id=4969,lambda2,HIT2)
 
 #this is same as "bradleyterry.multid" in R.
-lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
+lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT2, extractLambda=lambda$Lambda)
 
 #we need to take out the first value becasue of indexing problem.
-out<-lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)
+out<-lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT2, extractLambda=lambda$Lambda)
 out<-out[-1] #check
 
 #Same as "lambdaLoop2", but the outcome is not vector
@@ -138,22 +131,35 @@ allUpdatedLambda(hits=HIT2, lambdas=lambda, DocIds=DocId)
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
 source("toltest_Rcpp.R")
 #Rccp tolerance test.
-final(HIT2, lambda, DocId,200 )
+final(HIT2, lambda, DocId,1000 )
 
 #Test the speed: "Rcpp" vs "R only"
 library(microbenchmark)
-microbenchmark(final(HIT2, lambda, DocId, 100), iterative.bt.tol(1,1,DocId,lambda,HIT2,100))
+microbenchmark(final(HIT2, lambda, DocId, 10))
+microbenchmark(iterative.bt.tol(1,1,DocId,lambda,HIT2,10))
 
+#btw this is the benchmark outcome
+#>microbenchmark(final(HIT2, lambda, DocId, 10))
+#Unit: milliseconds
+#expr      min       lq     mean   median       uq
+#final(HIT2, lambda, DocId, 10) 220.1306 229.1866 257.7195 239.9635 270.7927
+#max neval
+#434.0704   100
+#> microbenchmark(iterative.bt.tol(1,1,DocId,lambda,HIT2,10))
+#Unit: seconds
+#expr      min       lq     mean
+#iterative.bt.tol(1, 1, DocId, lambda, HIT2, 10) 2.209509 2.410866 2.758498
+#median       uq      max neval
+#2.584111 3.009335 4.087998   100
 ##############################################
 #This is what we need to check finally########
 ##############################################
-Rcpp_out<-final(HIT2, lambda, DocId,200 )
+Rcpp_out<-final(HIT2, lambda, DocId,10000 )
 comparison<-as.data.frame(comparison)
 colnames(comparison)<-c("DocId", "Lambda")
 plot(Rcpp_out, comparison$Lambda)
 plot(log(Rcpp_out), comparison$Lambda)
 cor(log(Rcpp_out), comparison$Lambda) 
-#For now it look like it doesn't work: very low correlation
 
 
 

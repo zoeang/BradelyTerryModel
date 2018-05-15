@@ -11,6 +11,7 @@ dat<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/CombinedOutputEx
 
 HIT<-dat[,3:5]
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
+setwd('C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs')
 source("datatransform.R") #use only once
 
 #We will use HIT2 for R only functions in most cases
@@ -20,8 +21,7 @@ HIT2<-datatransform(HIT)
 set.seed(42)
 DocId<-unique(HIT$document_id)
 DocId<-sort(DocId, decreasing = F)
-Lambda<-runif(50)
-lambda<-cbind(DocId,Lambda)
+lambda<-cbind(DocId,runif(50))
 lambda<-as.data.frame(lambda)
 
 #Here is our old function which is a baseline 
@@ -129,8 +129,11 @@ out<-out[-1] #check
 allUpdatedLambda(hits=HIT2, lambdas=lambda, DocIds=DocId)
 
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
-source("toltest_Rcpp.R")
+
+Rcpp::sourceCpp("tolTest.cpp")
+
 #Rccp tolerance test.
+<<<<<<< HEAD
 final(HIT2, lambda, DocId,1000 )
 
 #Test the speed: "Rcpp" vs "R only"
@@ -155,6 +158,18 @@ microbenchmark(iterative.bt.tol(1,1,DocId,lambda,HIT2,10))
 #This is what we need to check finally########
 ##############################################
 Rcpp_out<-final(HIT2, lambda, DocId,10000 )
+=======
+tolTest(HIT2, lambda, DocId,200 )
+
+#Test the speed: "Rcpp" vs "R only"
+library(microbenchmark)
+microbenchmark(tolTest(HIT2, lambda, DocId, 100), iterative.bt.tol(1,1,DocId,lambda,HIT2,100))
+
+##############################################
+#This is what we need to check finally########
+##############################################
+Rcpp_out<-tolTest(HIT2, lambda, DocId,200 )
+>>>>>>> 5a7176c108b5bc2456ced915861172ae48e7a297
 comparison<-as.data.frame(comparison)
 colnames(comparison)<-c("DocId", "Lambda")
 plot(Rcpp_out, comparison$Lambda)

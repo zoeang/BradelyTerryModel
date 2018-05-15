@@ -6,21 +6,19 @@
 ## Re arranging data
 
 # this is the lambda I'm updating right now
-x<-5011  #if you want to change doc id (for instance, 4969), just change all 5011 to 4969.
+x<-4969  #if you want to change doc id (for instance, 4969), just change all 5011 to 4969.
 
-
-rownames(lambda)<-lambda$DocId 
-
-lambdax<-lambda[paste0(x),"Lambda"] 
 
 rownames(lambda)<-lambda$DocId #rename each row the the DocID; the row names are strings/ characters 
+colnames(lambda)<-c("DocId", 'Lambda')
+lambdax<-lambda[paste0(x),"Lambda"] #get the lambda value of x
 
-lambdax<-lambda[paste0(x),"Lambda"] #get the lambda value of x=5011
+
 #same thing as ^ doc.x.lambda<-lambda[paste0(x),"Lambda"] # the prior lambda value of doc x
 lambdax
-thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"] #make a vector of "choose" of the DocIDis compared to Doc 5011
+thisChoos<-HIT2[which(HIT2$DocIDi==x),"Choose"] #make a vector of "choose" of the DocIDis compared to doc x
 thisLambda<-lambda[paste0(HIT2[which(HIT2$DocIDi==x),"DocIDj"]),] #make a df of DocIds, lambda from HIT2; similar to lambdax
-#^why do some of the row names have decimals?
+#^why do some of the row names have decimals? Thee can only be unique row names; multiple instances of docID
 newData<-cbind(thisChoos, thisLambda)# df of choose, DocId, and  lambda from HIT2
 newData
 #this should stay in R; rename the function and objects

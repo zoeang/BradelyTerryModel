@@ -33,10 +33,10 @@ NumericVector lambdaLoop2(DataFrame hits, NumericVector DocIds, DataFrame Hit3, 
   LogicalVector matchedHits = docHit == x;// match wanted DocID to all DocIds
   NumericVector hitsIDs1 = as<NumericVector>(wich(Named("x")=matchedHits));//row index of matchedHits; check indices from R to rcpp
   Rcout << hitsIDs1;
-  NumericVector hitsIDs = hitsIDs1-1;
-  DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs],
-                                        Named("Lambda") = Lambda[hitsIDs],
-                                        Named("DocIDj") = DocIDj[hitsIDs]);
+  NumericVector hitsIDs = hitsIDs1;
+  DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs-1],
+                                        Named("Lambda") = Lambda[hitsIDs-1],
+                                        Named("DocIDj") = DocIDj[hitsIDs-1]);
  //
   updatedLambda = posteriorlambda(newData,extractLambda[i], 1, 1);
   //Rcout << updatedLambda; 

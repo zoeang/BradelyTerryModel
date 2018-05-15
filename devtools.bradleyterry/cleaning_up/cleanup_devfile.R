@@ -98,14 +98,17 @@ lambda<-as.data.frame(lambda)
 #colnames(lambda)<-c("DocIDj", "Lambda")
 
 library(plyr)
+#Why are we doing this?
 HIT2$Lambda <- lambda$Lambda[match(HIT2$DocIDj, lambda$DocId)]
+#Below will be the same as above
+#colnames(lambda)<-c("DocIDj","Lambda")
+#HIT2.1<-merge(HIT2, lambda, by="DocIDj")
 
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 
 Rcpp::sourceCpp("posteriorlambda.cpp")
 Rcpp::sourceCpp("getlambda.cpp")
-#Rcpp::sourceCpp("subsetLambdasDF.cpp")
 Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 #bring "newData" from jacob_R_code.
@@ -124,26 +127,26 @@ bradleyterry(a=1,b=1,id=4969,lambda2,HIT2)
 lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT2, extractLambda=lambda$Lambda)
 
 #we need to take out the first value becasue of indexing problem.
-out<-lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT2, extractLambda=lambda$Lambda)
+out<-lambdaLoop2(hits=HIT2,DocIds = DocId, Hit3 = HIT2, extractLambda=lambda$Lambda)
 out<-out[-1] #check
 
 #Same as "lambdaLoop2", but the outcome is not vector
 allUpdatedLambda(hits=HIT2, lambdas=lambda, DocIds=DocId)
 
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
-
-Rcpp::sourceCpp("tolTest.cpp")
+setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
+source("tolTest.R")
 
 #Rccp tolerance test.
-final(HIT2, lambda, DocId,1000 )
+tolTest(HIT2, lambda, DocId,100)
 
 #Test the speed: "Rcpp" vs "R only"
 library(microbenchmark)
-microbenchmark(final(HIT2, lambda, DocId, 10))
+microbenchmark(tolTest(HIT2, lambda, DocId, 10))
 microbenchmark(iterative.bt.tol(1,1,DocId,lambda,HIT2,10))
 
 #btw this is the benchmark outcome
-#>microbenchmark(final(HIT2, lambda, DocId, 10))
+#>microbenchmark(tolTest(HIT2, lambda, DocId, 10))
 #Unit: milliseconds
 #expr      min       lq     mean   median       uq
 #final(HIT2, lambda, DocId, 10) 220.1306 229.1866 257.7195 239.9635 270.7927
@@ -158,7 +161,7 @@ microbenchmark(iterative.bt.tol(1,1,DocId,lambda,HIT2,10))
 ##############################################
 #This is what we need to check finally########
 ##############################################
-Rcpp_out<-final(HIT2, lambda, DocId,10000 )
+Rcpp_out<-tolTest(HIT2, lambda, DocId,10000 )
 
 tolTest(HIT2, lambda, DocId,200 )
 

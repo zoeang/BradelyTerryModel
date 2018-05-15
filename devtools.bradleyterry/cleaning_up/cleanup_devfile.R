@@ -75,11 +75,32 @@ plot(log(recovered$Lambda),apiTest$rating)
 
 #Rcpp application
 #Prepare the data: With RCPP we will use HIT3 data for a while
-DocId<-sort(unique(HIT$document_id), decreasing=F)
+dat<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+dat<-read.csv("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+dat<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/CombinedOutputExperiment2.csv", header = T)
+
+HIT<-dat[,3:5]
+setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
+source("datatransform.R") #use only once
+
+#We will use HIT2 for R only functions in most cases
 HIT2<-datatransform(HIT)
-lambda<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
+
+#For testing our old R function
+set.seed(42)
+DocId<-unique(HIT$document_id)
+DocId<-sort(DocId, decreasing = F)
+Lambda<-runif(50)
+lambda<-cbind(DocId,Lambda)
+lambda<-as.data.frame(lambda)
+
+
+#DocId<-sort(unique(HIT$document_id), decreasing=F)
+#HIT2<-datatransform(HIT)
+#lambda2<- as.data.frame(cbind(DocId, runif(50))) #lambda values are random 
 colnames(lambda)<-c("DocIDj", "Lambda")
 HIT3<- merge(HIT2, lambda, by="DocIDj")
+
 
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/Rcpp")
@@ -88,11 +109,21 @@ Rcpp::sourceCpp("posteriorlambda.cpp")
 Rcpp::sourceCpp("getlambda.cpp")
 #Rcpp::sourceCpp("subsetLambdasDF.cpp")
 Rcpp::sourceCpp("lambdaLoop2.cpp")
-
 getlambda(lambda, DocId) #taking lambda for matching DocId
 
+HIT3<-subset(HIT3, HIT3$DocIDj=="4969") #dont use HIT3.
 #this is same as "bradleyterry" in R.
-posteriorlambda(HIT3, lambda$Lambda[1], 1,1) #one updated lambda for id 4969
+
+#bring "newData" from jacob_R_code.
+newData
+newnew<-as.data.frame(cbind(newData$thisChoos,newData$DocId,newData$Lambda))
+colnames(newnew)<-c("Choose","DocId","Lambda") #rename it for postlambda function.
+
+posteriorlambda(newnew, lambda$Lambda[1], 1,1) #one updated lambda for id 4969
+
+
+colnames(lambda)<-c("DocId","Lambda")
+bradleyterry(a=1,b=1,id=4969,lambda,HIT2)
 
 #this is same as "bradleyterry.multid" in R.
 lambdaLoop2(hits=HIT2,DocIds = DocId,Hit3 = HIT3, extractLambda=lambda$Lambda)

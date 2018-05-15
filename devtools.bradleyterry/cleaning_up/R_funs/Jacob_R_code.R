@@ -6,7 +6,7 @@
 ## Re arranging data
 
 # this is the lambda I'm updating right now
-x<-5011 
+x<-5011  #if you want to change doc id (for instance, 4969), just change all 5011 to 4969.
 
 
 rownames(lambda)<-lambda$DocId 
@@ -62,7 +62,7 @@ updateLambdax2<-function(allData, lambda, thisName, a=1, b=1){ #allData is an rc
   denominator<-(b+sum(1/(lambdax+newData$Lambda))) ## this works in c
   return(numerator/denominator) # do the division here in c 2
 }
-updateLambdax2(allData=toPassToC, lambda=lambda, thisName="5012")
+updateLambdax2(allData=toPassToC, lambda=lambda, thisName="4969")
 
 #in rcpp
 ## Update all Lambdas

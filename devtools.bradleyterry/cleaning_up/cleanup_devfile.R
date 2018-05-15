@@ -35,6 +35,8 @@ bradleyterry(a=1,b=1,id=4969,lambda,HIT2)
 DocId
 bradleyterry.multid(a=1,b=1, id=DocId, lambda, HIT2)
 
+iterative.bt(a=1,b=1,DocId,lambda,dat=HIT2,iterations=3)
+
 #tolerance test #
 iterative.bt.tol(a=1,b=1,DocId,lambda,dat=HIT2,iterations=100)
 
@@ -93,9 +95,9 @@ DocId<-sort(DocId, decreasing = F)
 Lambda<-runif(50)
 lambda<-cbind(DocId,Lambda)
 lambda<-as.data.frame(lambda)
-colnames(lambda)<-c("DocIDj", "Lambda")
+#colnames(lambda)<-c("DocIDj", "Lambda")
 
-
+library(plyr)
 HIT2$Lambda <- lambda$Lambda[match(HIT2$DocIDj, lambda$DocId)]
 
 setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/Rcpp")
@@ -133,7 +135,6 @@ setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cl
 Rcpp::sourceCpp("tolTest.cpp")
 
 #Rccp tolerance test.
-<<<<<<< HEAD
 final(HIT2, lambda, DocId,1000 )
 
 #Test the speed: "Rcpp" vs "R only"
@@ -158,7 +159,7 @@ microbenchmark(iterative.bt.tol(1,1,DocId,lambda,HIT2,10))
 #This is what we need to check finally########
 ##############################################
 Rcpp_out<-final(HIT2, lambda, DocId,10000 )
-=======
+
 tolTest(HIT2, lambda, DocId,200 )
 
 #Test the speed: "Rcpp" vs "R only"
@@ -169,7 +170,6 @@ microbenchmark(tolTest(HIT2, lambda, DocId, 100), iterative.bt.tol(1,1,DocId,lam
 #This is what we need to check finally########
 ##############################################
 Rcpp_out<-tolTest(HIT2, lambda, DocId,200 )
->>>>>>> 5a7176c108b5bc2456ced915861172ae48e7a297
 comparison<-as.data.frame(comparison)
 colnames(comparison)<-c("DocId", "Lambda")
 plot(Rcpp_out, comparison$Lambda)

@@ -108,7 +108,7 @@ setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/Rcpp")
 
 Rcpp::sourceCpp("posteriorlambda.cpp")
-Rcpp::sourceCpp("getlambda.cpp")
+Rcpp::sourceCpp("getlambda.cpp") 
 Rcpp::sourceCpp("lambdaLoop2.cpp")
 
 #bring "newData" from jacob_R_code.

@@ -31,13 +31,12 @@ NumericVector lambdaLoop2(DataFrame hits, NumericVector DocIds, DataFrame Hit3, 
   for( int i=0; i<(DocIds.size()); ++i){
   int x = DocIds[i];
   LogicalVector matchedHits = docHit == x;// match wanted DocID to all DocIds
-  NumericVector hitsIDs1 = as<NumericVector>(wich(Named("x")=matchedHits));//row index of matchedHits; check indices from R to rcpp
-  Rcout << hitsIDs1;
-  NumericVector hitsIDs = hitsIDs1;
+  NumericVector hitsIDs = as<NumericVector>(wich(Named("x")=matchedHits));//row index of matchedHits; check indices from R to rcpp
   DataFrame newData = DataFrame::create(Named("Choose") = Choose[hitsIDs-1],
                                         Named("Lambda") = Lambda[hitsIDs-1],
                                         Named("DocIDj") = DocIDj[hitsIDs-1]);
- //
+  Rcout<< newData;
+  Rcout<< "Here";
   updatedLambda = posteriorlambda(newData,extractLambda[i], 1, 1);
   //Rcout << updatedLambda; 
   updatedLambdas = as<NumericVector>(conc(updatedLambdas, updatedLambda));

@@ -11,6 +11,7 @@ tolTest<- function(hits, lambdas, DocIds, iterations){
     else{
       lambdas$Lambda<-lambda1
     }
+    print(lambda1)
   }
   return(lambda1)
   

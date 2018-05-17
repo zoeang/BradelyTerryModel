@@ -23,10 +23,11 @@ DocId<-unique(HIT$document_id)
 DocId<-sort(DocId, decreasing = F)
 lambda<-cbind(DocId,runif(50))
 lambda<-as.data.frame(lambda)
-
+colnames(lambda)<-c("DocId", "Lambda")
 #Here is our old function which is a baseline 
 #this is the old slower function
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
+
 source("com_bradley.R")
 #Give updated lambda: just one lambda for one id
 bradleyterry(a=1,b=1,id=4969,lambda,HIT2)
@@ -43,12 +44,14 @@ iterative.bt.tol(a=1,b=1,DocId,lambda,dat=HIT2,iterations=100)
 #Load Jacob and David's lambdas
 library(readr)
 apiTest <- read_csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/apiTest.csv")
+apiTest<-read.csv("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/apiTest.csv")
 apiTest$id
 apiTest$rating
 #install.packages("rstan")
 library(rstan)
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/")
 setwd("/Users/benjaminschneider/Documents/GitHub/BradelyTerryModel/")
+setwd("C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel")
 load("fitExperiment2.7")
 
 #We need to compare the output of our model to pst.lambda, the output of their stan model
@@ -65,7 +68,7 @@ cor(recovered$Lambda,apiTest$rating)
 cor(recovered$Lambda,comparison$Lambda)
 cor(log(recovered$Lambda),apiTest$rating)
 cor(log(recovered$Lambda),comparison$Lambda)
-
+plot(comparison$Lambda,log(tolOut1 ))
 ##############################################
 #This is what we need to check finally########
 ##############################################
@@ -83,6 +86,7 @@ dat<-read.csv("C:/Users/dell/Documents/GitHub/BradelyTerryModel/CombinedOutputEx
 
 HIT<-dat[,3:5]
 setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs")
+setwd('C:/Users/zoeja/OneDrive/Documents/Spring2018/R/BradelyTerryModel/devtools.bradleyterry/cleaning_up/R_funs')
 source("datatransform.R") #use only once
 
 #We will use HIT2 for R only functions in most cases
@@ -110,6 +114,8 @@ setwd("C:/Users/dell/Documents/GitHub/BradelyTerryModel/devtools.bradleyterry/Rc
 Rcpp::sourceCpp("posteriorlambda.cpp")
 Rcpp::sourceCpp("getlambda.cpp") 
 Rcpp::sourceCpp("lambdaLoop2.cpp")
+
+
 
 #bring "newData" from jacob_R_code.
 newData

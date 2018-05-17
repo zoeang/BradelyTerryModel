@@ -1,23 +1,18 @@
 tolTest<- function(hits, lambdas, DocIds, iterations){
-  lambda1<-lambdas$Lambda
+  lambda1<-lambdas$Lambda #allows tolerance check on line 8
   hits$Lambda <- lambdas$Lambda[match(hits$DocIDj, lambdas$DocId)]
-  for( i in 1:iterations){ #change arguments of lambdas
-    #HIT3<-merge(hits, lambdas, by="DocIDj") 
-    lambda1<-lambdaLoop2(hits=HIT2, DocIds = DocId, extractLambda=lambda1)
-    lambdas$Lambda<-lambda1<-lambda1[-1]
-    hits$Lambda <- lambdas$Lambda[match(hits$DocIDj, lambdas$DocId)]
-    if (all(abs(lambda1-lambdas$Lambda)<1e-15)){
+  for( i in 1:iterations){ 
+    lambda1<-lambdaLoop2(hits=hits, DocIds = DocId, Hit3=hits, extractLambda=lambda1)
+    lambdas$newLambda<-lambda1<-lambda1[-1] #correct indexing error; see line 30 of lambdaLoop2.cpp
+    hits$Lambda <- lambdas$newLambda[match(hits$DocIDj, lambdas$DocId)] # save output to be used in the next iteration of the loop
+    if (all(abs(lambda1-lambdas$Lambda)<1e-15)){ #test tolerance
       break
     }
     else{
       lambdas$Lambda<-lambda1
     }
-<<<<<<< HEAD
-    print(lambda1)
-=======
-    print(i)
->>>>>>> 3c135d3daff308d7dafb090fe6e67edd65999f5e
   }
   return(lambda1)
   
 }
+
